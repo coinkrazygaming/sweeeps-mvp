@@ -2,7 +2,14 @@ import { RequestHandler } from 'express';
 import { v4 as uuid } from 'uuid';
 import pool from '../db';
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || '');
+// Stripe is optional for MVP - loaded only when needed
+let stripe: any = null;
+const getStripe = () => {
+  if (!stripe && process.env.STRIPE_SECRET_KEY) {
+    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  }
+  return stripe;
+};
 
 export const listPackages: RequestHandler = async (req, res) => {
   try {
