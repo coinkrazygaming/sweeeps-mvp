@@ -305,6 +305,21 @@ export default function Profile() {
               </div>
             )}
 
+            {/* KYC Tab */}
+            {tab === "kyc" && (
+              <div className="glass rounded-2xl p-8 backdrop-blur-xl border border-white/10">
+                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                  <Shield className="w-6 h-6 text-yellow-400" />
+                  Know Your Customer (KYC) Verification
+                </h2>
+                <KYCForm
+                  onSubmit={handleSubmitKYC}
+                  loading={kycLoading}
+                  kycStatus={kycStatus}
+                />
+              </div>
+            )}
+
             {/* Redeem Tab */}
             {tab === "redeem" && (
               <div className="glass rounded-2xl p-8 backdrop-blur-xl border border-white/10">
