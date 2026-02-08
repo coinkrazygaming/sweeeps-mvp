@@ -22,6 +22,7 @@ export async function initializeDatabase() {
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         username VARCHAR(50) UNIQUE NOT NULL,
+        role VARCHAR(20) DEFAULT 'PLAYER',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         is_active BOOLEAN DEFAULT true,
@@ -29,6 +30,13 @@ export async function initializeDatabase() {
         jurisdiction VARCHAR(50) DEFAULT 'US'
       )
     `);
+
+    // Add role column if it doesn't exist (migration)
+    try {
+      await client.query(`ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'PLAYER'`);
+    } catch (error) {
+      // Column might already exist, ignore
+    }
 
     // User balances table (append-only ledger)
     await client.query(`
