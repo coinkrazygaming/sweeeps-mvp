@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { authAPI, usersAPI, ApiError } from './api-client';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { authAPI, usersAPI, ApiError } from "./api-client";
 
 export interface User {
   id: string;
@@ -23,7 +23,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
@@ -32,9 +34,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Load tokens from localStorage on mount
   useEffect(() => {
-    const savedAccessToken = localStorage.getItem('accessToken');
-    const savedRefreshToken = localStorage.getItem('refreshToken');
-    const savedUser = localStorage.getItem('user');
+    const savedAccessToken = localStorage.getItem("accessToken");
+    const savedRefreshToken = localStorage.getItem("refreshToken");
+    const savedUser = localStorage.getItem("user");
 
     if (savedAccessToken && savedUser) {
       setAccessToken(savedAccessToken);
@@ -54,11 +56,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setRefreshToken(response.refreshToken);
       setUser(response.user);
 
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem("accessToken", response.accessToken);
+      localStorage.setItem("refreshToken", response.refreshToken);
+      localStorage.setItem("user", JSON.stringify(response.user));
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : 'Signup failed';
+      const message = err instanceof ApiError ? err.message : "Signup failed";
       setError(message);
       throw err;
     }
@@ -73,11 +75,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setRefreshToken(response.refreshToken);
       setUser(response.user);
 
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem("accessToken", response.accessToken);
+      localStorage.setItem("refreshToken", response.refreshToken);
+      localStorage.setItem("user", JSON.stringify(response.user));
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : 'Login failed';
+      const message = err instanceof ApiError ? err.message : "Login failed";
       setError(message);
       throw err;
     }
@@ -88,9 +90,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAccessToken(null);
     setRefreshToken(null);
     setError(null);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
   };
 
   const refreshBalance = async () => {
@@ -105,21 +107,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               goldCoins: response.goldCoins,
               sweepstakesCoins: response.sweepstakesCoins,
             }
-          : null
+          : null,
       );
 
       if (user) {
         localStorage.setItem(
-          'user',
+          "user",
           JSON.stringify({
             ...user,
             goldCoins: response.goldCoins,
             sweepstakesCoins: response.sweepstakesCoins,
-          })
+          }),
         );
       }
     } catch (err) {
-      console.error('Failed to refresh balance:', err);
+      console.error("Failed to refresh balance:", err);
     }
   };
 
@@ -145,7 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 };

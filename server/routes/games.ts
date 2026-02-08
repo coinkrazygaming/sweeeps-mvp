@@ -1,19 +1,21 @@
-import { RequestHandler } from 'express';
-import { v4 as uuid } from 'uuid';
-import pool from '../db';
+import { RequestHandler } from "express";
+import { v4 as uuid } from "uuid";
+import pool from "../db";
 import {
   SlotsGame,
   BlackjackGame,
   RouletteGame,
   DiceGame,
   ScratchCardGame,
-} from '../game-engine';
+} from "../game-engine";
 
 export const listGames: RequestHandler = async (req, res) => {
   try {
     const client = await pool.connect();
     try {
-      const games = await client.query('SELECT * FROM games WHERE is_active = true ORDER BY name');
+      const games = await client.query(
+        "SELECT * FROM games WHERE is_active = true ORDER BY name",
+      );
 
       res.json({
         games: games.rows.map((g) => ({
@@ -31,8 +33,8 @@ export const listGames: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('List games error:', error);
-    res.status(500).json({ error: 'Failed to list games' });
+    console.error("List games error:", error);
+    res.status(500).json({ error: "Failed to list games" });
   }
 };
 
@@ -42,10 +44,12 @@ export const getGameDetails: RequestHandler = async (req, res) => {
 
     const client = await pool.connect();
     try {
-      const game = await client.query('SELECT * FROM games WHERE id = $1', [gameId]);
+      const game = await client.query("SELECT * FROM games WHERE id = $1", [
+        gameId,
+      ]);
 
       if (game.rows.length === 0) {
-        res.status(404).json({ error: 'Game not found' });
+        res.status(404).json({ error: "Game not found" });
         return;
       }
 
@@ -65,8 +69,8 @@ export const getGameDetails: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('Get game details error:', error);
-    res.status(500).json({ error: 'Failed to get game details' });
+    console.error("Get game details error:", error);
+    res.status(500).json({ error: "Failed to get game details" });
   }
 };
 
@@ -74,30 +78,32 @@ export const playGame: RequestHandler = async (req, res) => {
   try {
     const userId = req.userId;
     if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
+      res.status(401).json({ error: "Unauthorized" });
       return;
     }
 
     const { gameId, betAmount, currencyType, gameData } = req.body;
 
     if (!gameId || !betAmount || !currencyType) {
-      res.status(400).json({ error: 'Missing required fields' });
+      res.status(400).json({ error: "Missing required fields" });
       return;
     }
 
-    if (!['GC', 'SC'].includes(currencyType)) {
-      res.status(400).json({ error: 'Invalid currency type' });
+    if (!["GC", "SC"].includes(currencyType)) {
+      res.status(400).json({ error: "Invalid currency type" });
       return;
     }
 
     const client = await pool.connect();
     try {
-      await client.query('BEGIN');
+      await client.query("BEGIN");
 
       // Get game details
-      const game = await client.query('SELECT * FROM games WHERE id = $1', [gameId]);
+      const game = await client.query("SELECT * FROM games WHERE id = $1", [
+        gameId,
+      ]);
       if (game.rows.length === 0) {
-        res.status(404).json({ error: 'Game not found' });
+        res.status(404).json({ error: "Game not found" });
         return;
       }
 
@@ -106,16 +112,17 @@ export const playGame: RequestHandler = async (req, res) => {
 
       // Get current balance
       const balance = await client.query(
-        'SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1',
-        [userId]
+        "SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1",
+        [userId],
       );
 
       const currentBalance = balance.rows[0];
-      const balanceKey = currencyType === 'GC' ? 'gold_coins' : 'sweepstakes_coins';
+      const balanceKey =
+        currencyType === "GC" ? "gold_coins" : "sweepstakes_coins";
 
       if (parseFloat(currentBalance[balanceKey]) < betAmount) {
-        res.status(409).json({ error: 'Insufficient balance' });
-        await client.query('ROLLBACK');
+        res.status(409).json({ error: "Insufficient balance" });
+        await client.query("ROLLBACK");
         return;
       }
 
@@ -123,15 +130,19 @@ export const playGame: RequestHandler = async (req, res) => {
       let result: any = null;
       const gameName = gameRow.name.toLowerCase();
 
-      if (gameName.includes('slots')) {
+      if (gameName.includes("slots")) {
         result = SlotsGame.play(betAmount, rtp);
-      } else if (gameName.includes('blackjack')) {
+      } else if (gameName.includes("blackjack")) {
         result = BlackjackGame.play(betAmount, rtp);
-      } else if (gameName.includes('roulette')) {
-        result = RouletteGame.play(betAmount, gameData?.selectedNumber || 17, rtp);
-      } else if (gameName.includes('dice')) {
+      } else if (gameName.includes("roulette")) {
+        result = RouletteGame.play(
+          betAmount,
+          gameData?.selectedNumber || 17,
+          rtp,
+        );
+      } else if (gameName.includes("dice")) {
         result = DiceGame.play(betAmount, gameData?.selectedNumber || 7, rtp);
-      } else if (gameName.includes('scratch')) {
+      } else if (gameName.includes("scratch")) {
         result = ScratchCardGame.play(betAmount, rtp);
       } else {
         // Default to slots
@@ -142,7 +153,7 @@ export const playGame: RequestHandler = async (req, res) => {
       let newGC = parseFloat(currentBalance.gold_coins);
       let newSC = parseFloat(currentBalance.sweepstakes_coins);
 
-      if (currencyType === 'GC') {
+      if (currencyType === "GC") {
         newGC -= betAmount;
         newGC += result.winAmount;
       } else {
@@ -154,7 +165,7 @@ export const playGame: RequestHandler = async (req, res) => {
       await client.query(
         `INSERT INTO user_balances (user_id, gold_coins, sweepstakes_coins)
          VALUES ($1, $2, $3)`,
-        [userId, newGC, newSC]
+        [userId, newGC, newSC],
       );
 
       // Record game session
@@ -162,14 +173,29 @@ export const playGame: RequestHandler = async (req, res) => {
       await client.query(
         `INSERT INTO game_sessions (id, user_id, game_id, bet_amount, currency_type, win_amount, result)
          VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [sessionId, userId, gameId, betAmount, currencyType, result.winAmount, JSON.stringify(result)]
+        [
+          sessionId,
+          userId,
+          gameId,
+          betAmount,
+          currencyType,
+          result.winAmount,
+          JSON.stringify(result),
+        ],
       );
 
       // Log transactions
       await client.query(
         `INSERT INTO transactions (user_id, type, currency_type, amount, description, metadata)
          VALUES ($1, $2, $3, $4, $5, $6)`,
-        [userId, 'game_bet', currencyType, -betAmount, `Bet on ${gameRow.name}`, JSON.stringify({ gameId, sessionId })]
+        [
+          userId,
+          "game_bet",
+          currencyType,
+          -betAmount,
+          `Bet on ${gameRow.name}`,
+          JSON.stringify({ gameId, sessionId }),
+        ],
       );
 
       if (result.winAmount > 0) {
@@ -178,16 +204,16 @@ export const playGame: RequestHandler = async (req, res) => {
            VALUES ($1, $2, $3, $4, $5, $6)`,
           [
             userId,
-            'game_win',
+            "game_win",
             currencyType,
             result.winAmount,
             `Won on ${gameRow.name}`,
             JSON.stringify({ gameId, sessionId }),
-          ]
+          ],
         );
       }
 
-      await client.query('COMMIT');
+      await client.query("COMMIT");
 
       res.json({
         sessionId,
@@ -202,13 +228,13 @@ export const playGame: RequestHandler = async (req, res) => {
         },
       });
     } catch (error) {
-      await client.query('ROLLBACK');
+      await client.query("ROLLBACK");
       throw error;
     } finally {
       client.release();
     }
   } catch (error) {
-    console.error('Play game error:', error);
-    res.status(500).json({ error: 'Failed to play game' });
+    console.error("Play game error:", error);
+    res.status(500).json({ error: "Failed to play game" });
   }
 };

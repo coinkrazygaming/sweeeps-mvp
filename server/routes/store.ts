@@ -1,12 +1,12 @@
-import { RequestHandler } from 'express';
-import { v4 as uuid } from 'uuid';
-import pool from '../db';
+import { RequestHandler } from "express";
+import { v4 as uuid } from "uuid";
+import pool from "../db";
 
 // Stripe is optional for MVP - loaded only when needed
 let stripe: any = null;
 const getStripe = () => {
   if (!stripe && process.env.STRIPE_SECRET_KEY) {
-    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+    stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
   }
   return stripe;
 };
@@ -16,7 +16,7 @@ export const listPackages: RequestHandler = async (req, res) => {
     const client = await pool.connect();
     try {
       const packages = await client.query(
-        'SELECT * FROM gc_packages WHERE is_active = true ORDER BY display_order ASC'
+        "SELECT * FROM gc_packages WHERE is_active = true ORDER BY display_order ASC",
       );
 
       res.json({
@@ -33,8 +33,8 @@ export const listPackages: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('List packages error:', error);
-    res.status(500).json({ error: 'Failed to list packages' });
+    console.error("List packages error:", error);
+    res.status(500).json({ error: "Failed to list packages" });
   }
 };
 
@@ -42,24 +42,27 @@ export const createCheckoutSession: RequestHandler = async (req, res) => {
   try {
     const userId = req.userId;
     if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
+      res.status(401).json({ error: "Unauthorized" });
       return;
     }
 
     const { packageId, promoCode } = req.body;
 
     if (!packageId) {
-      res.status(400).json({ error: 'Package ID is required' });
+      res.status(400).json({ error: "Package ID is required" });
       return;
     }
 
     const client = await pool.connect();
     try {
       // Get package details
-      const pkg = await client.query('SELECT * FROM gc_packages WHERE id = $1', [packageId]);
+      const pkg = await client.query(
+        "SELECT * FROM gc_packages WHERE id = $1",
+        [packageId],
+      );
 
       if (pkg.rows.length === 0) {
-        res.status(404).json({ error: 'Package not found' });
+        res.status(404).json({ error: "Package not found" });
         return;
       }
 
@@ -74,25 +77,27 @@ export const createCheckoutSession: RequestHandler = async (req, res) => {
           `SELECT * FROM promo_codes WHERE code = $1 AND is_active = true 
            AND (expiry_date IS NULL OR expiry_date > NOW())
            AND (max_uses = -1 OR current_uses < max_uses)`,
-          [promoCode.toUpperCase()]
+          [promoCode.toUpperCase()],
         );
 
         if (promo.rows.length > 0) {
           const promoData = promo.rows[0];
-          if (promoData.bonus_type === 'percentage') {
-            finalPrice = Math.floor(finalPrice * (1 - promoData.bonus_amount / 100));
-          } else if (promoData.bonus_type === 'fixed') {
+          if (promoData.bonus_type === "percentage") {
+            finalPrice = Math.floor(
+              finalPrice * (1 - promoData.bonus_amount / 100),
+            );
+          } else if (promoData.bonus_type === "fixed") {
             finalPrice = Math.max(0, finalPrice - promoData.bonus_amount * 100);
-          } else if (promoData.bonus_type === 'gc_bonus') {
+          } else if (promoData.bonus_type === "gc_bonus") {
             bonusGC = parseFloat(promoData.bonus_amount);
-          } else if (promoData.bonus_type === 'sc_bonus') {
+          } else if (promoData.bonus_type === "sc_bonus") {
             bonusSC += parseFloat(promoData.bonus_amount);
           }
 
           // Increment promo usage
           await client.query(
-            'UPDATE promo_codes SET current_uses = current_uses + 1 WHERE id = $1',
-            [promoData.id]
+            "UPDATE promo_codes SET current_uses = current_uses + 1 WHERE id = $1",
+            [promoData.id],
           );
         }
       }
@@ -105,7 +110,7 @@ export const createCheckoutSession: RequestHandler = async (req, res) => {
         sessionId,
         clientSecret: `test_${sessionId}`,
         amount: finalPrice,
-        currency: 'usd',
+        currency: "usd",
         package: {
           id: pkgData.id,
           goldCoins: parseFloat(pkgData.gold_coins) + bonusGC,
@@ -116,8 +121,8 @@ export const createCheckoutSession: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('Create checkout error:', error);
-    res.status(500).json({ error: 'Failed to create checkout session' });
+    console.error("Create checkout error:", error);
+    res.status(500).json({ error: "Failed to create checkout session" });
   }
 };
 
@@ -125,26 +130,29 @@ export const completePurchase: RequestHandler = async (req, res) => {
   try {
     const userId = req.userId;
     if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
+      res.status(401).json({ error: "Unauthorized" });
       return;
     }
 
     const { packageId, stripeTransactionId, promoCode } = req.body;
 
     if (!packageId || !stripeTransactionId) {
-      res.status(400).json({ error: 'Missing required fields' });
+      res.status(400).json({ error: "Missing required fields" });
       return;
     }
 
     const client = await pool.connect();
     try {
-      await client.query('BEGIN');
+      await client.query("BEGIN");
 
       // Get package
-      const pkg = await client.query('SELECT * FROM gc_packages WHERE id = $1', [packageId]);
+      const pkg = await client.query(
+        "SELECT * FROM gc_packages WHERE id = $1",
+        [packageId],
+      );
 
       if (pkg.rows.length === 0) {
-        res.status(404).json({ error: 'Package not found' });
+        res.status(404).json({ error: "Package not found" });
         return;
       }
 
@@ -155,15 +163,15 @@ export const completePurchase: RequestHandler = async (req, res) => {
       // Apply promo if provided
       if (promoCode) {
         const promo = await client.query(
-          'SELECT * FROM promo_codes WHERE code = $1 AND is_active = true',
-          [promoCode.toUpperCase()]
+          "SELECT * FROM promo_codes WHERE code = $1 AND is_active = true",
+          [promoCode.toUpperCase()],
         );
 
         if (promo.rows.length > 0) {
           const promoData = promo.rows[0];
-          if (promoData.bonus_type === 'gc_bonus') {
+          if (promoData.bonus_type === "gc_bonus") {
             bonusGC = parseFloat(promoData.bonus_amount);
-          } else if (promoData.bonus_type === 'sc_bonus') {
+          } else if (promoData.bonus_type === "sc_bonus") {
             bonusSC += parseFloat(promoData.bonus_amount);
           }
         }
@@ -171,18 +179,24 @@ export const completePurchase: RequestHandler = async (req, res) => {
 
       // Get current balance
       const balance = await client.query(
-        'SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1',
-        [userId]
+        "SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1",
+        [userId],
       );
 
-      const currentBalance = balance.rows[0] || { gold_coins: 0, sweepstakes_coins: 0 };
-      const newGC = parseFloat(currentBalance.gold_coins) + parseFloat(pkgData.gold_coins) + bonusGC;
+      const currentBalance = balance.rows[0] || {
+        gold_coins: 0,
+        sweepstakes_coins: 0,
+      };
+      const newGC =
+        parseFloat(currentBalance.gold_coins) +
+        parseFloat(pkgData.gold_coins) +
+        bonusGC;
       const newSC = parseFloat(currentBalance.sweepstakes_coins) + bonusSC;
 
       // Update balance
       await client.query(
-        'INSERT INTO user_balances (user_id, gold_coins, sweepstakes_coins) VALUES ($1, $2, $3)',
-        [userId, newGC, newSC]
+        "INSERT INTO user_balances (user_id, gold_coins, sweepstakes_coins) VALUES ($1, $2, $3)",
+        [userId, newGC, newSC],
       );
 
       // Record purchase
@@ -190,7 +204,14 @@ export const completePurchase: RequestHandler = async (req, res) => {
       await client.query(
         `INSERT INTO purchases (id, user_id, package_id, amount_cents, stripe_transaction_id, status)
          VALUES ($1, $2, $3, $4, $5, $6)`,
-        [purchaseId, userId, packageId, pkgData.price_cents, stripeTransactionId, 'completed']
+        [
+          purchaseId,
+          userId,
+          packageId,
+          pkgData.price_cents,
+          stripeTransactionId,
+          "completed",
+        ],
       );
 
       // Log transactions
@@ -199,23 +220,29 @@ export const completePurchase: RequestHandler = async (req, res) => {
          VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           userId,
-          'purchase',
-          'GC',
+          "purchase",
+          "GC",
           parseFloat(pkgData.gold_coins) + bonusGC,
           `Purchased ${pkgData.name}`,
           JSON.stringify({ purchaseId, stripeTransactionId }),
-        ]
+        ],
       );
 
       if (bonusSC > 0) {
         await client.query(
           `INSERT INTO transactions (user_id, type, currency_type, amount, description)
            VALUES ($1, $2, $3, $4, $5)`,
-          [userId, 'purchase_bonus', 'SC', bonusSC, 'Sweepstakes bonus from purchase']
+          [
+            userId,
+            "purchase_bonus",
+            "SC",
+            bonusSC,
+            "Sweepstakes bonus from purchase",
+          ],
         );
       }
 
-      await client.query('COMMIT');
+      await client.query("COMMIT");
 
       res.json({
         success: true,
@@ -226,14 +253,14 @@ export const completePurchase: RequestHandler = async (req, res) => {
         },
       });
     } catch (error) {
-      await client.query('ROLLBACK');
+      await client.query("ROLLBACK");
       throw error;
     } finally {
       client.release();
     }
   } catch (error) {
-    console.error('Complete purchase error:', error);
-    res.status(500).json({ error: 'Failed to complete purchase' });
+    console.error("Complete purchase error:", error);
+    res.status(500).json({ error: "Failed to complete purchase" });
   }
 };
 
@@ -242,7 +269,7 @@ export const validatePromoCode: RequestHandler = async (req, res) => {
     const { code } = req.body;
 
     if (!code) {
-      res.status(400).json({ error: 'Code is required' });
+      res.status(400).json({ error: "Code is required" });
       return;
     }
 
@@ -252,11 +279,11 @@ export const validatePromoCode: RequestHandler = async (req, res) => {
         `SELECT * FROM promo_codes WHERE code = $1 AND is_active = true 
          AND (expiry_date IS NULL OR expiry_date > NOW())
          AND (max_uses = -1 OR current_uses < max_uses)`,
-        [code.toUpperCase()]
+        [code.toUpperCase()],
       );
 
       if (promo.rows.length === 0) {
-        res.status(404).json({ error: 'Invalid or expired promo code' });
+        res.status(404).json({ error: "Invalid or expired promo code" });
         return;
       }
 
@@ -273,7 +300,7 @@ export const validatePromoCode: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('Validate promo error:', error);
-    res.status(500).json({ error: 'Failed to validate promo code' });
+    console.error("Validate promo error:", error);
+    res.status(500).json({ error: "Failed to validate promo code" });
   }
 };

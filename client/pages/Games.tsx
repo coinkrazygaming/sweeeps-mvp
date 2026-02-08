@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/lib/auth-context';
-import { gamesAPI } from '@/lib/api-client';
-import { Button } from '@/components/ui/button';
-import { Play, ArrowLeft, Zap, Volume2 } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/lib/auth-context";
+import { gamesAPI } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
+import { Play, ArrowLeft, Zap, Volume2 } from "lucide-react";
 
 export default function Games() {
   const { user, accessToken, refreshBalance } = useAuth();
@@ -12,14 +12,14 @@ export default function Games() {
   const [games, setGames] = useState<any[]>([]);
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [betAmount, setBetAmount] = useState(10);
-  const [currencyType, setCurrencyType] = useState<'GC' | 'SC'>('GC');
+  const [currencyType, setCurrencyType] = useState<"GC" | "SC">("GC");
   const [loading, setLoading] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [gameResult, setGameResult] = useState<any>(null);
 
   useEffect(() => {
     if (!user || !accessToken) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -28,13 +28,13 @@ export default function Games() {
         const response = await gamesAPI.listGames();
         setGames(response.games || []);
 
-        const gameId = searchParams.get('gameId');
+        const gameId = searchParams.get("gameId");
         if (gameId) {
           const game = response.games?.find((g: any) => g.id === gameId);
           if (game) setSelectedGame(game);
         }
       } catch (error) {
-        console.error('Failed to load games:', error);
+        console.error("Failed to load games:", error);
       } finally {
         setLoading(false);
       }
@@ -47,9 +47,10 @@ export default function Games() {
     if (!selectedGame || !accessToken) return;
 
     // Check balance
-    const balance = currencyType === 'GC' ? user!.goldCoins : user!.sweepstakesCoins;
+    const balance =
+      currencyType === "GC" ? user!.goldCoins : user!.sweepstakesCoins;
     if (balance < betAmount) {
-      alert('Insufficient balance!');
+      alert("Insufficient balance!");
       return;
     }
 
@@ -61,14 +62,14 @@ export default function Games() {
         accessToken,
         selectedGame.id,
         betAmount,
-        currencyType
+        currencyType,
       );
 
       setGameResult(result);
       await refreshBalance();
     } catch (error) {
-      console.error('Game error:', error);
-      alert('Failed to play game');
+      console.error("Game error:", error);
+      alert("Failed to play game");
     } finally {
       setPlaying(false);
     }
@@ -94,9 +95,13 @@ export default function Games() {
 
           {/* Game Title */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">{selectedGame.name}</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">
+              {selectedGame.name}
+            </h1>
             <p className="text-slate-400">{selectedGame.description}</p>
-            <p className="text-sm text-slate-500 mt-2">RTP: {selectedGame.rtpPercentage}%</p>
+            <p className="text-sm text-slate-500 mt-2">
+              RTP: {selectedGame.rtpPercentage}%
+            </p>
           </div>
 
           {/* Game Area */}
@@ -105,7 +110,8 @@ export default function Games() {
               <Zap className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
               <p className="text-slate-400 text-lg">Game Loading...</p>
               <p className="text-sm text-slate-500 mt-2">
-                Full game graphics coming soon. Configure bet and play to see results!
+                Full game graphics coming soon. Configure bet and play to see
+                results!
               </p>
             </div>
           </div>
@@ -115,41 +121,49 @@ export default function Games() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Current Balance */}
               <div>
-                <h3 className="text-sm font-semibold text-slate-400 mb-2">Current Balance</h3>
+                <h3 className="text-sm font-semibold text-slate-400 mb-2">
+                  Current Balance
+                </h3>
                 <div className="space-y-2">
                   <div className="glass rounded-lg p-4">
                     <p className="text-sm text-slate-400">Gold Coins</p>
-                    <p className="text-2xl font-bold text-yellow-400">{user.goldCoins.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-yellow-400">
+                      {user.goldCoins.toFixed(2)}
+                    </p>
                   </div>
                   <div className="glass rounded-lg p-4">
                     <p className="text-sm text-slate-400">Sweepstakes Coins</p>
-                    <p className="text-2xl font-bold text-purple-400">{user.sweepstakesCoins.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-purple-400">
+                      {user.sweepstakesCoins.toFixed(2)}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Bet Controls */}
               <div>
-                <h3 className="text-sm font-semibold text-slate-400 mb-4">Place Your Bet</h3>
+                <h3 className="text-sm font-semibold text-slate-400 mb-4">
+                  Place Your Bet
+                </h3>
 
                 {/* Currency Selection */}
                 <div className="flex gap-2 mb-4">
                   <button
-                    onClick={() => setCurrencyType('GC')}
+                    onClick={() => setCurrencyType("GC")}
                     className={`flex-1 py-2 rounded-lg font-semibold transition ${
-                      currencyType === 'GC'
-                        ? 'bg-yellow-400 text-slate-900'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      currencyType === "GC"
+                        ? "bg-yellow-400 text-slate-900"
+                        : "bg-slate-800 text-slate-300 hover:bg-slate-700"
                     }`}
                   >
                     Gold Coins
                   </button>
                   <button
-                    onClick={() => setCurrencyType('SC')}
+                    onClick={() => setCurrencyType("SC")}
                     className={`flex-1 py-2 rounded-lg font-semibold transition ${
-                      currencyType === 'SC'
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      currencyType === "SC"
+                        ? "bg-purple-500 text-white"
+                        : "bg-slate-800 text-slate-300 hover:bg-slate-700"
                     }`}
                   >
                     SC
@@ -158,11 +172,20 @@ export default function Games() {
 
                 {/* Bet Amount */}
                 <div className="mb-4">
-                  <label className="block text-sm text-slate-400 mb-2">Bet Amount</label>
+                  <label className="block text-sm text-slate-400 mb-2">
+                    Bet Amount
+                  </label>
                   <input
                     type="number"
                     value={betAmount}
-                    onChange={(e) => setBetAmount(Math.max(selectedGame.minBet, parseFloat(e.target.value) || 0))}
+                    onChange={(e) =>
+                      setBetAmount(
+                        Math.max(
+                          selectedGame.minBet,
+                          parseFloat(e.target.value) || 0,
+                        ),
+                      )
+                    }
                     min={selectedGame.minBet}
                     max={selectedGame.maxBet}
                     className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-yellow-400"
@@ -179,7 +202,7 @@ export default function Games() {
                   className="w-full gradient-gold text-slate-900 font-bold py-3 rounded-lg hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <Play className="w-5 h-5" />
-                  {playing ? 'Playing...' : 'Play Game'}
+                  {playing ? "Playing..." : "Play Game"}
                 </Button>
               </div>
             </div>
@@ -197,16 +220,23 @@ export default function Games() {
             {gameResult.won ? (
               <>
                 <div className="text-6xl mb-4">🎉</div>
-                <h1 className="text-4xl font-bold text-yellow-400 mb-4">YOU WON!</h1>
+                <h1 className="text-4xl font-bold text-yellow-400 mb-4">
+                  YOU WON!
+                </h1>
                 <p className="text-2xl text-white font-bold mb-8">
-                  +{gameResult.winAmount.toFixed(2)} {currencyType === 'GC' ? 'Gold Coins' : 'Sweepstakes Coins'}
+                  +{gameResult.winAmount.toFixed(2)}{" "}
+                  {currencyType === "GC" ? "Gold Coins" : "Sweepstakes Coins"}
                 </p>
               </>
             ) : (
               <>
                 <div className="text-6xl mb-4">💔</div>
-                <h1 className="text-4xl font-bold text-slate-300 mb-4">No Win This Time</h1>
-                <p className="text-xl text-slate-400 mb-8">Better luck next time!</p>
+                <h1 className="text-4xl font-bold text-slate-300 mb-4">
+                  No Win This Time
+                </h1>
+                <p className="text-xl text-slate-400 mb-8">
+                  Better luck next time!
+                </p>
               </>
             )}
 
@@ -214,19 +244,27 @@ export default function Games() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-slate-400">Bet Amount</p>
-                  <p className="text-2xl font-bold text-white">{gameResult.betAmount.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {gameResult.betAmount.toFixed(2)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-400">Win Amount</p>
-                  <p className="text-2xl font-bold text-yellow-400">{gameResult.winAmount.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-yellow-400">
+                    {gameResult.winAmount.toFixed(2)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-400">New GC Balance</p>
-                  <p className="text-xl font-bold text-yellow-400">{gameResult.newBalance.goldCoins.toFixed(2)}</p>
+                  <p className="text-xl font-bold text-yellow-400">
+                    {gameResult.newBalance.goldCoins.toFixed(2)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-400">New SC Balance</p>
-                  <p className="text-xl font-bold text-purple-400">{gameResult.newBalance.sweepstakesCoins.toFixed(2)}</p>
+                  <p className="text-xl font-bold text-purple-400">
+                    {gameResult.newBalance.sweepstakesCoins.toFixed(2)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -260,7 +298,9 @@ export default function Games() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <h1 className="text-4xl font-bold text-white mb-2">Browse Games</h1>
-        <p className="text-slate-400 mb-8">Explore our collection of 100+ casino games</p>
+        <p className="text-slate-400 mb-8">
+          Explore our collection of 100+ casino games
+        </p>
 
         {loading ? (
           <div className="text-center py-12">
@@ -279,14 +319,20 @@ export default function Games() {
                     <h3 className="text-lg font-bold text-white group-hover:text-yellow-400 transition">
                       {game.name}
                     </h3>
-                    <p className="text-sm text-slate-400 capitalize">{game.category}</p>
+                    <p className="text-sm text-slate-400 capitalize">
+                      {game.category}
+                    </p>
                   </div>
                   <Play className="w-6 h-6 text-yellow-400 opacity-0 group-hover:opacity-100 transition" />
                 </div>
-                <p className="text-sm text-slate-400 mb-4">{game.description}</p>
+                <p className="text-sm text-slate-400 mb-4">
+                  {game.description}
+                </p>
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>RTP: {game.rtpPercentage}%</span>
-                  <span>Bet: {game.minBet.toFixed(0)}-{game.maxBet.toFixed(0)}</span>
+                  <span>
+                    Bet: {game.minBet.toFixed(0)}-{game.maxBet.toFixed(0)}
+                  </span>
                 </div>
               </button>
             ))}

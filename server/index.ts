@@ -101,9 +101,17 @@ export function createServer() {
 
   // Redemption routes
   app.post("/api/redemptions", authMiddleware, createRedemptionRequest);
-  app.get("/api/redemptions/:redemptionId", authMiddleware, getRedemptionStatus);
+  app.get(
+    "/api/redemptions/:redemptionId",
+    authMiddleware,
+    getRedemptionStatus,
+  );
   app.get("/api/redemptions", authMiddleware, getUserRedemptions);
-  app.delete("/api/redemptions/:redemptionId", authMiddleware, cancelRedemption);
+  app.delete(
+    "/api/redemptions/:redemptionId",
+    authMiddleware,
+    cancelRedemption,
+  );
 
   // Admin routes
   app.get("/api/admin/users/search", authMiddleware, searchUsers);

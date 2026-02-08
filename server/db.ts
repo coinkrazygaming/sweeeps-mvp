@@ -1,10 +1,12 @@
-import { Pool } from 'pg';
-import dotenv from 'dotenv';
+import { Pool } from "pg";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost/casino',
+  connectionString:
+    process.env.DATABASE_URL ||
+    "postgresql://postgres:password@localhost/casino",
 });
 
 export async function initializeDatabase() {
@@ -157,16 +159,28 @@ export async function initializeDatabase() {
     `);
 
     // Create indexes for better query performance
-    await client.query('CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id)');
-    await client.query('CREATE INDEX IF NOT EXISTS idx_transactions_created ON transactions(created_at)');
-    await client.query('CREATE INDEX IF NOT EXISTS idx_game_sessions_user_id ON game_sessions(user_id)');
-    await client.query('CREATE INDEX IF NOT EXISTS idx_game_sessions_created ON game_sessions(created_at)');
-    await client.query('CREATE INDEX IF NOT EXISTS idx_redemptions_user_id ON redemptions(user_id)');
-    await client.query('CREATE INDEX IF NOT EXISTS idx_redemptions_status ON redemptions(status)');
+    await client.query(
+      "CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id)",
+    );
+    await client.query(
+      "CREATE INDEX IF NOT EXISTS idx_transactions_created ON transactions(created_at)",
+    );
+    await client.query(
+      "CREATE INDEX IF NOT EXISTS idx_game_sessions_user_id ON game_sessions(user_id)",
+    );
+    await client.query(
+      "CREATE INDEX IF NOT EXISTS idx_game_sessions_created ON game_sessions(created_at)",
+    );
+    await client.query(
+      "CREATE INDEX IF NOT EXISTS idx_redemptions_user_id ON redemptions(user_id)",
+    );
+    await client.query(
+      "CREATE INDEX IF NOT EXISTS idx_redemptions_status ON redemptions(status)",
+    );
 
-    console.log('Database initialized successfully');
+    console.log("Database initialized successfully");
   } catch (error) {
-    console.error('Database initialization error:', error);
+    console.error("Database initialization error:", error);
     throw error;
   } finally {
     client.release();

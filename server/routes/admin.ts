@@ -1,6 +1,6 @@
-import { RequestHandler } from 'express';
-import { v4 as uuid } from 'uuid';
-import pool from '../db';
+import { RequestHandler } from "express";
+import { v4 as uuid } from "uuid";
+import pool from "../db";
 
 // Simple admin check - in production, use proper role-based access control
 const checkAdmin = (userId: string): Promise<boolean> => {
@@ -13,15 +13,15 @@ export const searchUsers: RequestHandler = async (req, res) => {
   try {
     const adminId = req.userId;
     if (!adminId || !(await checkAdmin(adminId))) {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(403).json({ error: "Unauthorized" });
       return;
     }
 
-    const { query, limit = '50', offset = '0' } = req.query;
+    const { query, limit = "50", offset = "0" } = req.query;
 
     const client = await pool.connect();
     try {
-      let sql = 'SELECT id, email, username, is_active, created_at FROM users';
+      let sql = "SELECT id, email, username, is_active, created_at FROM users";
       let params: any[] = [];
 
       if (query) {
@@ -38,10 +38,13 @@ export const searchUsers: RequestHandler = async (req, res) => {
       const enriched = await Promise.all(
         users.rows.map(async (u) => {
           const balance = await client.query(
-            'SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1',
-            [u.id]
+            "SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1",
+            [u.id],
           );
-          const bal = balance.rows[0] || { gold_coins: 0, sweepstakes_coins: 0 };
+          const bal = balance.rows[0] || {
+            gold_coins: 0,
+            sweepstakes_coins: 0,
+          };
           return {
             id: u.id,
             email: u.email,
@@ -51,7 +54,7 @@ export const searchUsers: RequestHandler = async (req, res) => {
             sweepstakesCoins: parseFloat(bal.sweepstakes_coins),
             createdAt: u.created_at,
           };
-        })
+        }),
       );
 
       res.json({ users: enriched });
@@ -59,8 +62,8 @@ export const searchUsers: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('Search users error:', error);
-    res.status(500).json({ error: 'Failed to search users' });
+    console.error("Search users error:", error);
+    res.status(500).json({ error: "Failed to search users" });
   }
 };
 
@@ -68,41 +71,47 @@ export const adjustBalance: RequestHandler = async (req, res) => {
   try {
     const adminId = req.userId;
     if (!adminId || !(await checkAdmin(adminId))) {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(403).json({ error: "Unauthorized" });
       return;
     }
 
     const { targetUserId, currencyType, amount, reason } = req.body;
 
     if (!targetUserId || !currencyType || amount === undefined) {
-      res.status(400).json({ error: 'Missing required fields' });
+      res.status(400).json({ error: "Missing required fields" });
       return;
     }
 
     const client = await pool.connect();
     try {
-      await client.query('BEGIN');
+      await client.query("BEGIN");
 
       // Get current balance
       const balance = await client.query(
-        'SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1',
-        [targetUserId]
+        "SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1",
+        [targetUserId],
       );
 
       if (balance.rows.length === 0) {
-        res.status(404).json({ error: 'User not found' });
-        await client.query('ROLLBACK');
+        res.status(404).json({ error: "User not found" });
+        await client.query("ROLLBACK");
         return;
       }
 
       const currentBalance = balance.rows[0];
-      const newGC = currencyType === 'GC' ? parseFloat(currentBalance.gold_coins) + amount : parseFloat(currentBalance.gold_coins);
-      const newSC = currencyType === 'SC' ? parseFloat(currentBalance.sweepstakes_coins) + amount : parseFloat(currentBalance.sweepstakes_coins);
+      const newGC =
+        currencyType === "GC"
+          ? parseFloat(currentBalance.gold_coins) + amount
+          : parseFloat(currentBalance.gold_coins);
+      const newSC =
+        currencyType === "SC"
+          ? parseFloat(currentBalance.sweepstakes_coins) + amount
+          : parseFloat(currentBalance.sweepstakes_coins);
 
       // Update balance
       await client.query(
-        'INSERT INTO user_balances (user_id, gold_coins, sweepstakes_coins) VALUES ($1, $2, $3)',
-        [targetUserId, newGC, newSC]
+        "INSERT INTO user_balances (user_id, gold_coins, sweepstakes_coins) VALUES ($1, $2, $3)",
+        [targetUserId, newGC, newSC],
       );
 
       // Log transaction
@@ -111,22 +120,27 @@ export const adjustBalance: RequestHandler = async (req, res) => {
          VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           targetUserId,
-          'admin_adjustment',
+          "admin_adjustment",
           currencyType,
           amount,
-          reason || 'Admin adjustment',
+          reason || "Admin adjustment",
           JSON.stringify({ adminId }),
-        ]
+        ],
       );
 
       // Log audit
       await client.query(
         `INSERT INTO audit_log (admin_id, action, target_user_id, details)
          VALUES ($1, $2, $3, $4)`,
-        [adminId, 'balance_adjustment', targetUserId, JSON.stringify({ currencyType, amount, reason })]
+        [
+          adminId,
+          "balance_adjustment",
+          targetUserId,
+          JSON.stringify({ currencyType, amount, reason }),
+        ],
       );
 
-      await client.query('COMMIT');
+      await client.query("COMMIT");
 
       res.json({
         success: true,
@@ -136,14 +150,14 @@ export const adjustBalance: RequestHandler = async (req, res) => {
         },
       });
     } catch (error) {
-      await client.query('ROLLBACK');
+      await client.query("ROLLBACK");
       throw error;
     } finally {
       client.release();
     }
   } catch (error) {
-    console.error('Adjust balance error:', error);
-    res.status(500).json({ error: 'Failed to adjust balance' });
+    console.error("Adjust balance error:", error);
+    res.status(500).json({ error: "Failed to adjust balance" });
   }
 };
 
@@ -151,25 +165,33 @@ export const freezeAccount: RequestHandler = async (req, res) => {
   try {
     const adminId = req.userId;
     if (!adminId || !(await checkAdmin(adminId))) {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(403).json({ error: "Unauthorized" });
       return;
     }
 
     const { targetUserId, freeze } = req.body;
 
     if (!targetUserId || freeze === undefined) {
-      res.status(400).json({ error: 'Missing required fields' });
+      res.status(400).json({ error: "Missing required fields" });
       return;
     }
 
     const client = await pool.connect();
     try {
-      await client.query('UPDATE users SET is_active = $1 WHERE id = $2', [!freeze, targetUserId]);
+      await client.query("UPDATE users SET is_active = $1 WHERE id = $2", [
+        !freeze,
+        targetUserId,
+      ]);
 
       await client.query(
         `INSERT INTO audit_log (admin_id, action, target_user_id, details)
          VALUES ($1, $2, $3, $4)`,
-        [adminId, freeze ? 'account_frozen' : 'account_unfrozen', targetUserId, JSON.stringify({})]
+        [
+          adminId,
+          freeze ? "account_frozen" : "account_unfrozen",
+          targetUserId,
+          JSON.stringify({}),
+        ],
       );
 
       res.json({ success: true, frozen: freeze });
@@ -177,8 +199,8 @@ export const freezeAccount: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('Freeze account error:', error);
-    res.status(500).json({ error: 'Failed to freeze account' });
+    console.error("Freeze account error:", error);
+    res.status(500).json({ error: "Failed to freeze account" });
   }
 };
 
@@ -186,11 +208,11 @@ export const listRedemptions: RequestHandler = async (req, res) => {
   try {
     const adminId = req.userId;
     if (!adminId || !(await checkAdmin(adminId))) {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(403).json({ error: "Unauthorized" });
       return;
     }
 
-    const { status = 'pending', limit = '50', offset = '0' } = req.query;
+    const { status = "pending", limit = "50", offset = "0" } = req.query;
 
     const client = await pool.connect();
     try {
@@ -202,7 +224,7 @@ export const listRedemptions: RequestHandler = async (req, res) => {
          WHERE r.status = $1
          ORDER BY r.created_at DESC
          LIMIT $2 OFFSET $3`,
-        [status, parseInt(limit as string), parseInt(offset as string)]
+        [status, parseInt(limit as string), parseInt(offset as string)],
       );
 
       res.json({
@@ -221,8 +243,8 @@ export const listRedemptions: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('List redemptions error:', error);
-    res.status(500).json({ error: 'Failed to list redemptions' });
+    console.error("List redemptions error:", error);
+    res.status(500).json({ error: "Failed to list redemptions" });
   }
 };
 
@@ -230,26 +252,29 @@ export const approveRedemption: RequestHandler = async (req, res) => {
   try {
     const adminId = req.userId;
     if (!adminId || !(await checkAdmin(adminId))) {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(403).json({ error: "Unauthorized" });
       return;
     }
 
     const { redemptionId, notes } = req.body;
 
     if (!redemptionId) {
-      res.status(400).json({ error: 'Redemption ID is required' });
+      res.status(400).json({ error: "Redemption ID is required" });
       return;
     }
 
     const client = await pool.connect();
     try {
-      await client.query('BEGIN');
+      await client.query("BEGIN");
 
-      const redemption = await client.query('SELECT * FROM redemptions WHERE id = $1', [redemptionId]);
+      const redemption = await client.query(
+        "SELECT * FROM redemptions WHERE id = $1",
+        [redemptionId],
+      );
 
       if (redemption.rows.length === 0) {
-        res.status(404).json({ error: 'Redemption not found' });
-        await client.query('ROLLBACK');
+        res.status(404).json({ error: "Redemption not found" });
+        await client.query("ROLLBACK");
         return;
       }
 
@@ -257,8 +282,8 @@ export const approveRedemption: RequestHandler = async (req, res) => {
 
       // Update redemption status
       await client.query(
-        'UPDATE redemptions SET status = $1, admin_notes = $2, updated_at = NOW() WHERE id = $3',
-        ['approved', notes || '', redemptionId]
+        "UPDATE redemptions SET status = $1, admin_notes = $2, updated_at = NOW() WHERE id = $3",
+        ["approved", notes || "", redemptionId],
       );
 
       // Log audit
@@ -267,24 +292,27 @@ export const approveRedemption: RequestHandler = async (req, res) => {
          VALUES ($1, $2, $3, $4)`,
         [
           adminId,
-          'redemption_approved',
+          "redemption_approved",
           redemptionData.user_id,
-          JSON.stringify({ redemptionId, sweepstakesCoins: redemptionData.sweepstakes_coins }),
-        ]
+          JSON.stringify({
+            redemptionId,
+            sweepstakesCoins: redemptionData.sweepstakes_coins,
+          }),
+        ],
       );
 
-      await client.query('COMMIT');
+      await client.query("COMMIT");
 
       res.json({ success: true });
     } catch (error) {
-      await client.query('ROLLBACK');
+      await client.query("ROLLBACK");
       throw error;
     } finally {
       client.release();
     }
   } catch (error) {
-    console.error('Approve redemption error:', error);
-    res.status(500).json({ error: 'Failed to approve redemption' });
+    console.error("Approve redemption error:", error);
+    res.status(500).json({ error: "Failed to approve redemption" });
   }
 };
 
@@ -292,23 +320,26 @@ export const rejectRedemption: RequestHandler = async (req, res) => {
   try {
     const adminId = req.userId;
     if (!adminId || !(await checkAdmin(adminId))) {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(403).json({ error: "Unauthorized" });
       return;
     }
 
     const { redemptionId, notes } = req.body;
 
     if (!redemptionId) {
-      res.status(400).json({ error: 'Redemption ID is required' });
+      res.status(400).json({ error: "Redemption ID is required" });
       return;
     }
 
     const client = await pool.connect();
     try {
-      const redemption = await client.query('SELECT * FROM redemptions WHERE id = $1', [redemptionId]);
+      const redemption = await client.query(
+        "SELECT * FROM redemptions WHERE id = $1",
+        [redemptionId],
+      );
 
       if (redemption.rows.length === 0) {
-        res.status(404).json({ error: 'Redemption not found' });
+        res.status(404).json({ error: "Redemption not found" });
         return;
       }
 
@@ -316,8 +347,8 @@ export const rejectRedemption: RequestHandler = async (req, res) => {
 
       // Update redemption status
       await client.query(
-        'UPDATE redemptions SET status = $1, admin_notes = $2, updated_at = NOW() WHERE id = $3',
-        ['rejected', notes || '', redemptionId]
+        "UPDATE redemptions SET status = $1, admin_notes = $2, updated_at = NOW() WHERE id = $3",
+        ["rejected", notes || "", redemptionId],
       );
 
       // Log audit
@@ -326,10 +357,10 @@ export const rejectRedemption: RequestHandler = async (req, res) => {
          VALUES ($1, $2, $3, $4)`,
         [
           adminId,
-          'redemption_rejected',
+          "redemption_rejected",
           redemptionData.user_id,
           JSON.stringify({ redemptionId, reason: notes }),
-        ]
+        ],
       );
 
       res.json({ success: true });
@@ -337,8 +368,8 @@ export const rejectRedemption: RequestHandler = async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('Reject redemption error:', error);
-    res.status(500).json({ error: 'Failed to reject redemption' });
+    console.error("Reject redemption error:", error);
+    res.status(500).json({ error: "Failed to reject redemption" });
   }
 };
 
@@ -346,7 +377,7 @@ export const getAnalytics: RequestHandler = async (req, res) => {
   try {
     const adminId = req.userId;
     if (!adminId || !(await checkAdmin(adminId))) {
-      res.status(403).json({ error: 'Unauthorized' });
+      res.status(403).json({ error: "Unauthorized" });
       return;
     }
 
@@ -354,18 +385,18 @@ export const getAnalytics: RequestHandler = async (req, res) => {
     try {
       // DAU/MAU
       const dau = await client.query(
-        `SELECT COUNT(DISTINCT user_id) FROM game_sessions WHERE created_at >= NOW() - INTERVAL '1 day'`
+        `SELECT COUNT(DISTINCT user_id) FROM game_sessions WHERE created_at >= NOW() - INTERVAL '1 day'`,
       );
       const mau = await client.query(
-        `SELECT COUNT(DISTINCT user_id) FROM game_sessions WHERE created_at >= NOW() - INTERVAL '30 days'`
+        `SELECT COUNT(DISTINCT user_id) FROM game_sessions WHERE created_at >= NOW() - INTERVAL '30 days'`,
       );
 
       // Total users
-      const totalUsers = await client.query('SELECT COUNT(*) FROM users');
+      const totalUsers = await client.query("SELECT COUNT(*) FROM users");
 
       // Revenue (purchases)
       const totalRevenue = await client.query(
-        `SELECT SUM(amount_cents) as total FROM purchases WHERE status = 'completed'`
+        `SELECT SUM(amount_cents) as total FROM purchases WHERE status = 'completed'`,
       );
 
       // Currency distribution
@@ -382,15 +413,19 @@ export const getAnalytics: RequestHandler = async (req, res) => {
         totalUsers: parseInt(totalUsers.rows[0].count),
         totalRevenueCents: totalRevenue.rows[0].total || 0,
         currencyDistribution: {
-          totalGoldCoins: parseFloat(currencyDistribution.rows[0]?.total_gold || 0),
-          totalSweeepstakesCoins: parseFloat(currencyDistribution.rows[0]?.total_sweepstakes || 0),
+          totalGoldCoins: parseFloat(
+            currencyDistribution.rows[0]?.total_gold || 0,
+          ),
+          totalSweeepstakesCoins: parseFloat(
+            currencyDistribution.rows[0]?.total_sweepstakes || 0,
+          ),
         },
       });
     } finally {
       client.release();
     }
   } catch (error) {
-    console.error('Get analytics error:', error);
-    res.status(500).json({ error: 'Failed to get analytics' });
+    console.error("Get analytics error:", error);
+    res.status(500).json({ error: "Failed to get analytics" });
   }
 };

@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/lib/auth-context';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/lib/auth-context";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const navigate = useNavigate();
   const { login, isLoading, error } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [localError, setLocalError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [localError, setLocalError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalError('');
+    setLocalError("");
 
     try {
       await login(email, password);
-      navigate('/');
+      navigate("/");
     } catch (err) {
-      setLocalError(error || 'Login failed');
+      setLocalError(error || "Login failed");
     }
   };
 
@@ -34,7 +34,9 @@ export default function Login() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-2">
-            <span className="gradient-gold bg-clip-text text-transparent">FORTUNE</span>
+            <span className="gradient-gold bg-clip-text text-transparent">
+              FORTUNE
+            </span>
           </h1>
           <p className="text-slate-400 text-lg">Sweepstakes Casino</p>
         </div>
@@ -51,7 +53,9 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Email
+              </label>
               <input
                 type="email"
                 value={email}
@@ -63,7 +67,9 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Password
+              </label>
               <input
                 type="password"
                 value={password}
@@ -79,14 +85,17 @@ export default function Login() {
               disabled={isLoading}
               className="w-full gradient-gold text-slate-900 font-bold py-3 rounded-lg hover:opacity-90 transition disabled:opacity-50"
             >
-              {isLoading ? 'Logging in...' : 'Log In'}
+              {isLoading ? "Logging in..." : "Log In"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-slate-400">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-yellow-400 hover:text-yellow-300 font-semibold">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-yellow-400 hover:text-yellow-300 font-semibold"
+              >
                 Sign up
               </Link>
             </p>

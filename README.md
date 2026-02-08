@@ -5,6 +5,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 ## Features
 
 ### Core Platform
+
 - ✅ Email + Password Authentication with JWT
 - ✅ Dual-Currency System (Gold Coins & Sweepstakes Coins)
 - ✅ User Profiles with Balance Management
@@ -13,6 +14,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 - ✅ Game Session Tracking
 
 ### Gaming System
+
 - ✅ Scalable Game Framework (supports 100+ games)
 - ✅ 10 Playable Games:
   - Classic Slots (3x3)
@@ -30,12 +32,14 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 - ✅ Real-time Game Results
 
 ### Store & Purchases
+
 - ✅ Gold Coin Packages
 - ✅ Promo Code System
 - ✅ Purchase History
 - ✅ Stripe Integration (Test Mode)
 
 ### Sweepstakes Compliance
+
 - ✅ No Purchase Required for Sweepstakes Coins
 - ✅ Redemption Request System
 - ✅ Minimum Redemption Threshold
@@ -44,6 +48,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 - ✅ Audit Logging
 
 ### Admin Panel
+
 - ✅ User Search & Management
 - ✅ Balance Adjustments with Audit Trail
 - ✅ Account Freeze/Unfreeze
@@ -52,6 +57,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 - ✅ Game Configuration
 
 ### Modern UI
+
 - ✅ Casino-Style Dark Theme with Gold/Purple Accents
 - ✅ Mobile-First Responsive Design
 - ✅ Glass-Morphism Effects
@@ -61,6 +67,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 ## Tech Stack
 
 ### Frontend
+
 - **React 18** - UI Framework
 - **React Router 6** - Client-side routing
 - **TypeScript** - Type safety
@@ -70,6 +77,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 - **Vite** - Build tool
 
 ### Backend
+
 - **Node.js** - Runtime
 - **Express 5** - Web framework
 - **PostgreSQL 13+** - Database
@@ -78,6 +86,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 - **Bcrypt** - Password hashing
 
 ### DevOps
+
 - **Docker** - Containerization ready
 - **Netlify** - Deployment ready
 
@@ -116,6 +125,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - PostgreSQL 13+
 - pnpm (recommended) or npm/yarn
@@ -123,6 +133,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
 ### Installation
 
 1. **Clone & Install**
+
    ```bash
    git clone <repository>
    cd fortune-casino
@@ -130,17 +141,19 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
    ```
 
 2. **Setup Database**
+
    ```bash
    # Create PostgreSQL database
    createdb fortune_casino
-   
+
    # The app will auto-initialize the schema on first run
    ```
 
 3. **Environment Setup**
+
    ```bash
    cp .env.example .env
-   
+
    # Edit .env with your values:
    # - DATABASE_URL: PostgreSQL connection string
    # - JWT_SECRET: Generate a secure random string
@@ -148,6 +161,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
    ```
 
 4. **Start Development Server**
+
    ```bash
    pnpm dev
    ```
@@ -155,6 +169,7 @@ A production-ready full-stack MVP for a U.S.-compliant sweepstakes social casino
    The app will be available at `http://localhost:8080`
 
 ### Database Connection String Format
+
 ```
 postgresql://[user]:[password]@[host]:[port]/[database]
 
@@ -165,11 +180,13 @@ postgresql://postgres:password@localhost:5432/fortune_casino
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/signup` - Create new account
 - `POST /api/auth/login` - Login user
 - `POST /api/auth/refresh` - Refresh token
 
 ### Users
+
 - `GET /api/users/profile` - Get user profile
 - `GET /api/users/balance` - Get current balance
 - `GET /api/users/transactions` - Get transaction history
@@ -177,23 +194,27 @@ postgresql://postgres:password@localhost:5432/fortune_casino
 - `POST /api/users/daily-bonus` - Claim daily bonus
 
 ### Games
+
 - `GET /api/games` - List all games
 - `GET /api/games/:gameId` - Get game details
 - `POST /api/games/play` - Play a game
 
 ### Store
+
 - `GET /api/store/packages` - List coin packages
 - `POST /api/store/checkout` - Create checkout session
 - `POST /api/store/purchase` - Complete purchase
 - `POST /api/store/validate-promo` - Validate promo code
 
 ### Redemptions
+
 - `POST /api/redemptions` - Create redemption request
 - `GET /api/redemptions/:redemptionId` - Get redemption status
 - `GET /api/redemptions` - Get user redemptions
 - `DELETE /api/redemptions/:redemptionId` - Cancel redemption
 
 ### Admin
+
 - `GET /api/admin/users/search` - Search users
 - `POST /api/admin/users/balance` - Adjust balance
 - `POST /api/admin/users/freeze` - Freeze account
@@ -209,6 +230,7 @@ postgresql://postgres:password@localhost:5432/fortune_casino
 Games can be added in two ways:
 
 #### 1. Configuration-Based (No Code Changes)
+
 Add a new entry to the `games` table with JSON configuration:
 
 ```sql
@@ -229,6 +251,7 @@ VALUES (
 ```
 
 #### 2. Code-Based (For Complex Logic)
+
 Add a new game class in `server/game-engine.ts`:
 
 ```typescript
@@ -236,13 +259,15 @@ export class MyNewGame {
   static play(betAmount: number, rtp: number): GameResult {
     const shouldWin = RNGService.shouldWin(rtp);
     const winAmount = shouldWin ? betAmount * 5 : 0;
-    
+
     return {
-      gameId: 'my-new-game',
+      gameId: "my-new-game",
       betAmount,
       winAmount,
       won: winAmount > 0,
-      resultData: { /* game-specific data */ },
+      resultData: {
+        /* game-specific data */
+      },
       rtp,
     };
   }
@@ -260,12 +285,15 @@ Register in `server/routes/games.ts`:
 ## Compliance Features
 
 ### No Purchase Necessary (NPN)
+
 - Sweepstakes Coins are granted for free via daily bonuses
 - Purchase-based wording separated from sweepstakes messaging
 - Clear compliance notices on auth pages
 
 ### Audit Trail
+
 Every transaction and admin action is logged:
+
 - User balance changes
 - Game plays
 - Purchases
@@ -273,35 +301,41 @@ Every transaction and admin action is logged:
 - Admin adjustments
 
 ### Redemption Management
+
 - Minimum threshold enforcement
 - Admin review required
 - Status tracking
 - Denial reasons logged
 
 ### Jurisdiction Controls
+
 Database ready for jurisdiction-based access rules:
+
 ```typescript
 // Example: Restrict by state
-if (user.jurisdiction === 'BLOCKED_STATE') {
-  return res.status(403).json({ error: 'Not available in your jurisdiction' });
+if (user.jurisdiction === "BLOCKED_STATE") {
+  return res.status(403).json({ error: "Not available in your jurisdiction" });
 }
 ```
 
 ## Deployment
 
 ### Netlify
+
 ```bash
 pnpm build
 netlify deploy --prod
 ```
 
 ### Vercel
+
 ```bash
 pnpm build
 vercel deploy --prod
 ```
 
 ### Docker
+
 ```bash
 docker build -t fortune-casino .
 docker run -p 8080:8080 fortune-casino
@@ -310,11 +344,13 @@ docker run -p 8080:8080 fortune-casino
 ## Testing
 
 Run tests:
+
 ```bash
 pnpm test
 ```
 
 Run TypeScript check:
+
 ```bash
 pnpm typecheck
 ```
@@ -330,6 +366,7 @@ pnpm typecheck
 - ✅ Environment variables for secrets
 
 ### Production Checklist
+
 - [ ] Change `JWT_SECRET` to a random string
 - [ ] Enable HTTPS/SSL
 - [ ] Set up database backups
@@ -344,6 +381,7 @@ pnpm typecheck
 ## Compliance & Legal
 
 This project is built for compliance with U.S. sweepstakes laws:
+
 - No purchase required to play or win
 - Alternate method of entry (mail-in) ready
 - Clear probability disclosures (RTP)
@@ -351,6 +389,7 @@ This project is built for compliance with U.S. sweepstakes laws:
 - Admin controls for accountability
 
 **Note**: This is a template. Before launching:
+
 - Consult with legal counsel
 - Review state-specific regulations
 - Implement required disclaimers
@@ -359,6 +398,7 @@ This project is built for compliance with U.S. sweepstakes laws:
 ## Database Schema
 
 The database includes the following key tables:
+
 - `users` - User accounts
 - `user_balances` - Current balance snapshot
 - `transactions` - Immutable ledger of all transactions
@@ -373,6 +413,7 @@ The database includes the following key tables:
 ## Contributing
 
 To contribute:
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -386,6 +427,7 @@ To contribute:
 ## Support
 
 For issues or questions:
+
 - Check existing issues
 - Review the FAQ section
 - Contact support@fortunecasino.com
@@ -393,6 +435,7 @@ For issues or questions:
 ## Roadmap
 
 ### Planned Features
+
 - [ ] Video-based games
 - [ ] Multiplayer games
 - [ ] Leaderboards

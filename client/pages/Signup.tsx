@@ -1,36 +1,36 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/lib/auth-context';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/lib/auth-context";
+import { Button } from "@/components/ui/button";
 
 export default function Signup() {
   const navigate = useNavigate();
   const { signup, isLoading, error } = useAuth();
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [localError, setLocalError] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [localError, setLocalError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalError('');
+    setLocalError("");
 
     if (password !== confirmPassword) {
-      setLocalError('Passwords do not match');
+      setLocalError("Passwords do not match");
       return;
     }
 
     if (password.length < 6) {
-      setLocalError('Password must be at least 6 characters');
+      setLocalError("Password must be at least 6 characters");
       return;
     }
 
     try {
       await signup(email, password, username);
-      navigate('/');
+      navigate("/");
     } catch (err) {
-      setLocalError(error || 'Signup failed');
+      setLocalError(error || "Signup failed");
     }
   };
 
@@ -46,7 +46,9 @@ export default function Signup() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-2">
-            <span className="gradient-gold bg-clip-text text-transparent">FORTUNE</span>
+            <span className="gradient-gold bg-clip-text text-transparent">
+              FORTUNE
+            </span>
           </h1>
           <p className="text-slate-400 text-lg">Sweepstakes Casino</p>
         </div>
@@ -63,7 +65,9 @@ export default function Signup() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Email
+              </label>
               <input
                 type="email"
                 value={email}
@@ -75,7 +79,9 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Username</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Username
+              </label>
               <input
                 type="text"
                 value={username}
@@ -87,7 +93,9 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Password
+              </label>
               <input
                 type="password"
                 value={password}
@@ -99,7 +107,9 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Confirm Password</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Confirm Password
+              </label>
               <input
                 type="password"
                 value={confirmPassword}
@@ -115,14 +125,17 @@ export default function Signup() {
               disabled={isLoading}
               className="w-full gradient-gold text-slate-900 font-bold py-3 rounded-lg hover:opacity-90 transition disabled:opacity-50"
             >
-              {isLoading ? 'Creating account...' : 'Create Account'}
+              {isLoading ? "Creating account..." : "Create Account"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-slate-400">
-              Already have an account?{' '}
-              <Link to="/login" className="text-yellow-400 hover:text-yellow-300 font-semibold">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="text-yellow-400 hover:text-yellow-300 font-semibold"
+              >
                 Log in
               </Link>
             </p>
@@ -130,8 +143,12 @@ export default function Signup() {
 
           {/* Compliance notice */}
           <div className="mt-6 text-xs text-slate-500 text-center space-y-1">
-            <p className="font-semibold text-slate-400">No Purchase Necessary</p>
-            <p>This is a sweepstakes social casino. Free to play, real prizes.</p>
+            <p className="font-semibold text-slate-400">
+              No Purchase Necessary
+            </p>
+            <p>
+              This is a sweepstakes social casino. Free to play, real prizes.
+            </p>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { extractTokenFromHeader, verifyToken } from './auth';
+import { Request, Response, NextFunction, RequestHandler } from "express";
+import { extractTokenFromHeader, verifyToken } from "./auth";
 
 declare global {
   namespace Express {
@@ -10,17 +10,21 @@ declare global {
   }
 }
 
-export const authMiddleware: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware: RequestHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const token = extractTokenFromHeader(req.headers.authorization);
 
   if (!token) {
-    res.status(401).json({ error: 'No authorization token provided' });
+    res.status(401).json({ error: "No authorization token provided" });
     return;
   }
 
   const payload = verifyToken(token);
   if (!payload) {
-    res.status(401).json({ error: 'Invalid or expired token' });
+    res.status(401).json({ error: "Invalid or expired token" });
     return;
   }
 
@@ -29,9 +33,14 @@ export const authMiddleware: RequestHandler = (req: Request, res: Response, next
   next();
 };
 
-export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('API Error:', err);
+export const errorHandler = (
+  err: any,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
+  console.error("API Error:", err);
   res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
+    error: err.message || "Internal server error",
   });
 };

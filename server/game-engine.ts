@@ -1,4 +1,4 @@
-import pool from './db';
+import pool from "./db";
 
 // Server-side RNG service
 export class RNGService {
@@ -6,7 +6,11 @@ export class RNGService {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  static generateRandomArray(length: number, min: number = 0, max: number = 9): number[] {
+  static generateRandomArray(
+    length: number,
+    min: number = 0,
+    max: number = 9,
+  ): number[] {
     return Array.from({ length }, () => this.generateRandomNumber(min, max));
   }
 
@@ -54,43 +58,43 @@ export interface ScratchCardResult extends GameResult {
 // Game configurations
 export const GAME_CONFIGS = {
   SLOTS_CLASSIC: {
-    id: 'slots-classic',
-    name: 'Classic Slots',
-    category: 'slots',
+    id: "slots-classic",
+    name: "Classic Slots",
+    category: "slots",
     reels: 3,
     rows: 3,
     rtp: 95.0,
   },
   SLOTS_DELUXE: {
-    id: 'slots-deluxe',
-    name: 'Deluxe Slots',
-    category: 'slots',
+    id: "slots-deluxe",
+    name: "Deluxe Slots",
+    category: "slots",
     reels: 5,
     rows: 3,
     rtp: 96.0,
   },
   BLACKJACK: {
-    id: 'blackjack',
-    name: 'Blackjack',
-    category: 'table',
+    id: "blackjack",
+    name: "Blackjack",
+    category: "table",
     rtp: 99.5,
   },
   ROULETTE: {
-    id: 'roulette',
-    name: 'Roulette',
-    category: 'table',
+    id: "roulette",
+    name: "Roulette",
+    category: "table",
     rtp: 97.3,
   },
   DICE: {
-    id: 'dice',
-    name: 'Dice Roll',
-    category: 'dice',
+    id: "dice",
+    name: "Dice Roll",
+    category: "dice",
     rtp: 96.5,
   },
   SCRATCH_CARD: {
-    id: 'scratch-card',
-    name: 'Scratch Card',
-    category: 'scratch',
+    id: "scratch-card",
+    name: "Scratch Card",
+    category: "scratch",
     rtp: 95.0,
   },
 };
@@ -111,7 +115,7 @@ export class SlotsGame {
       reels[0][0] = winSymbol;
       reels[1][0] = winSymbol;
       reels[2][0] = winSymbol;
-      winAmount = betAmount * (RNGService.generateRandomNumber(2, 50));
+      winAmount = betAmount * RNGService.generateRandomNumber(2, 50);
     }
 
     return {
@@ -162,9 +166,26 @@ export class BlackjackGame {
   }
 
   private static drawCard(): string {
-    const suits = ['♠', '♥', '♦', '♣'];
-    const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-    return ranks[RNGService.generateRandomNumber(0, 12)] + suits[RNGService.generateRandomNumber(0, 3)];
+    const suits = ["♠", "♥", "♦", "♣"];
+    const ranks = [
+      "A",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "J",
+      "Q",
+      "K",
+    ];
+    return (
+      ranks[RNGService.generateRandomNumber(0, 12)] +
+      suits[RNGService.generateRandomNumber(0, 3)]
+    );
   }
 
   private static calculateTotal(hand: string[]): number {
@@ -173,8 +194,8 @@ export class BlackjackGame {
 
     for (const card of hand) {
       const rank = card.slice(0, -1);
-      if (rank === 'A') aces++;
-      else if (['J', 'Q', 'K'].includes(rank)) total += 10;
+      if (rank === "A") aces++;
+      else if (["J", "Q", "K"].includes(rank)) total += 10;
       else total += parseInt(rank, 10);
     }
 
@@ -189,9 +210,14 @@ export class BlackjackGame {
 }
 
 export class RouletteGame {
-  static play(betAmount: number, selectedNumber: number, rtp: number): RouletteResult {
+  static play(
+    betAmount: number,
+    selectedNumber: number,
+    rtp: number,
+  ): RouletteResult {
     const spinResult = RNGService.generateRandomNumber(0, 36);
-    const shouldWin = RNGService.shouldWin(rtp) && spinResult === selectedNumber;
+    const shouldWin =
+      RNGService.shouldWin(rtp) && spinResult === selectedNumber;
 
     let winAmount = 0;
     if (shouldWin) {
@@ -212,8 +238,15 @@ export class RouletteGame {
 }
 
 export class DiceGame {
-  static play(betAmount: number, selectedNumber: number, rtp: number): DiceResult {
-    const diceRolls = [RNGService.generateRandomNumber(1, 6), RNGService.generateRandomNumber(1, 6)];
+  static play(
+    betAmount: number,
+    selectedNumber: number,
+    rtp: number,
+  ): DiceResult {
+    const diceRolls = [
+      RNGService.generateRandomNumber(1, 6),
+      RNGService.generateRandomNumber(1, 6),
+    ];
     const total = diceRolls.reduce((a, b) => a + b, 0);
 
     const shouldWin = RNGService.shouldWin(rtp) && total === selectedNumber;
@@ -234,7 +267,7 @@ export class DiceGame {
 
 export class ScratchCardGame {
   static play(betAmount: number, rtp: number): ScratchCardResult {
-    const symbols = ['💎', '⭐', '🎉', '🍀', '💰'];
+    const symbols = ["💎", "⭐", "🎉", "🍀", "💰"];
     const scratched = [
       symbols[RNGService.generateRandomNumber(0, 4)],
       symbols[RNGService.generateRandomNumber(0, 4)],
@@ -242,11 +275,14 @@ export class ScratchCardGame {
     ];
 
     const shouldWin = RNGService.shouldWin(rtp);
-    const matched = shouldWin && scratched[0] === scratched[1] && scratched[1] === scratched[2];
+    const matched =
+      shouldWin &&
+      scratched[0] === scratched[1] &&
+      scratched[1] === scratched[2];
 
     let winAmount = 0;
     if (matched) {
-      winAmount = betAmount * (RNGService.generateRandomNumber(3, 25));
+      winAmount = betAmount * RNGService.generateRandomNumber(3, 25);
     }
 
     return {
@@ -268,90 +304,90 @@ export async function seedGames() {
   try {
     const games = [
       {
-        name: 'Classic Slots',
-        category: 'slots',
-        description: 'Traditional 3x3 slot machine',
+        name: "Classic Slots",
+        category: "slots",
+        description: "Traditional 3x3 slot machine",
         rtp_percentage: 95.0,
         min_bet: 1,
         max_bet: 1000,
         game_config: { reels: 3, rows: 3 },
       },
       {
-        name: 'Deluxe Slots',
-        category: 'slots',
-        description: 'Premium 5x3 slot machine',
+        name: "Deluxe Slots",
+        category: "slots",
+        description: "Premium 5x3 slot machine",
         rtp_percentage: 96.0,
         min_bet: 1,
         max_bet: 2000,
         game_config: { reels: 5, rows: 3 },
       },
       {
-        name: 'Ultra Slots',
-        category: 'slots',
-        description: 'Extended 5x5 slot machine',
+        name: "Ultra Slots",
+        category: "slots",
+        description: "Extended 5x5 slot machine",
         rtp_percentage: 94.5,
         min_bet: 5,
         max_bet: 5000,
         game_config: { reels: 5, rows: 5 },
       },
       {
-        name: 'Mega Slots',
-        category: 'slots',
-        description: 'Massive 6x4 slot machine with multipliers',
+        name: "Mega Slots",
+        category: "slots",
+        description: "Massive 6x4 slot machine with multipliers",
         rtp_percentage: 96.5,
         min_bet: 10,
         max_bet: 10000,
         game_config: { reels: 6, rows: 4 },
       },
       {
-        name: 'Golden Slots',
-        category: 'slots',
-        description: 'Gold-themed 5x4 slot machine',
+        name: "Golden Slots",
+        category: "slots",
+        description: "Gold-themed 5x4 slot machine",
         rtp_percentage: 95.5,
         min_bet: 5,
         max_bet: 5000,
         game_config: { reels: 5, rows: 4 },
       },
       {
-        name: 'Blackjack',
-        category: 'table',
-        description: 'Classic Blackjack card game',
+        name: "Blackjack",
+        category: "table",
+        description: "Classic Blackjack card game",
         rtp_percentage: 99.5,
         min_bet: 1,
         max_bet: 1000,
         game_config: {},
       },
       {
-        name: 'Roulette',
-        category: 'table',
-        description: 'European Roulette',
+        name: "Roulette",
+        category: "table",
+        description: "European Roulette",
         rtp_percentage: 97.3,
         min_bet: 1,
         max_bet: 5000,
         game_config: { wheelSize: 37 },
       },
       {
-        name: 'Dice Roll',
-        category: 'dice',
-        description: 'Two-dice game with custom payout',
+        name: "Dice Roll",
+        category: "dice",
+        description: "Two-dice game with custom payout",
         rtp_percentage: 96.5,
         min_bet: 1,
         max_bet: 1000,
         game_config: { dice: 2 },
       },
       {
-        name: 'Scratch Card',
-        category: 'scratch',
-        description: 'Instant scratch card game',
+        name: "Scratch Card",
+        category: "scratch",
+        description: "Instant scratch card game",
         rtp_percentage: 95.0,
         min_bet: 0.5,
         max_bet: 500,
         game_config: { symbols: 3 },
       },
       {
-        name: 'Keno',
-        category: 'lottery',
-        description: 'Numbers-based lottery game',
+        name: "Keno",
+        category: "lottery",
+        description: "Numbers-based lottery game",
         rtp_percentage: 92.0,
         min_bet: 1,
         max_bet: 2000,
@@ -360,7 +396,10 @@ export async function seedGames() {
     ];
 
     for (const game of games) {
-      const existing = await client.query('SELECT id FROM games WHERE name = $1', [game.name]);
+      const existing = await client.query(
+        "SELECT id FROM games WHERE name = $1",
+        [game.name],
+      );
       if (existing.rows.length === 0) {
         await client.query(
           `INSERT INTO games (name, category, description, rtp_percentage, min_bet, max_bet, game_config)
@@ -373,12 +412,12 @@ export async function seedGames() {
             game.min_bet,
             game.max_bet,
             JSON.stringify(game.game_config),
-          ]
+          ],
         );
       }
     }
 
-    console.log('Games seeded successfully');
+    console.log("Games seeded successfully");
   } finally {
     client.release();
   }
