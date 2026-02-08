@@ -107,17 +107,17 @@ export const redemptionsAPI = {
 // Admin API
 export const adminAPI = {
   searchUsers: (token: string, query?: string, limit = 50, offset = 0) =>
-    apiCall('GET', `/admin/users/search?query=${query || ''}&limit=${limit}&offset=${offset}`, undefined, token),
+    apiCall<{ users: any[] }>('GET', `/admin/users/search?query=${query || ''}&limit=${limit}&offset=${offset}`, undefined, token),
   adjustBalance: (token: string, targetUserId: string, currencyType: 'GC' | 'SC', amount: number, reason?: string) =>
-    apiCall('POST', '/admin/users/balance', { targetUserId, currencyType, amount, reason }, token),
+    apiCall<any>('POST', '/admin/users/balance', { targetUserId, currencyType, amount, reason }, token),
   freezeAccount: (token: string, targetUserId: string, freeze: boolean) =>
-    apiCall('POST', '/admin/users/freeze', { targetUserId, freeze }, token),
+    apiCall<any>('POST', '/admin/users/freeze', { targetUserId, freeze }, token),
   listRedemptions: (token: string, status = 'pending', limit = 50, offset = 0) =>
-    apiCall('GET', `/admin/redemptions?status=${status}&limit=${limit}&offset=${offset}`, undefined, token),
+    apiCall<{ redemptions: any[] }>('GET', `/admin/redemptions?status=${status}&limit=${limit}&offset=${offset}`, undefined, token),
   approveRedemption: (token: string, redemptionId: string, notes?: string) =>
-    apiCall('POST', '/admin/redemptions/approve', { redemptionId, notes }, token),
+    apiCall<any>('POST', '/admin/redemptions/approve', { redemptionId, notes }, token),
   rejectRedemption: (token: string, redemptionId: string, notes?: string) =>
-    apiCall('POST', '/admin/redemptions/reject', { redemptionId, notes }, token),
+    apiCall<any>('POST', '/admin/redemptions/reject', { redemptionId, notes }, token),
   getAnalytics: (token: string) =>
-    apiCall('GET', '/admin/analytics', undefined, token),
+    apiCall<any>('GET', '/admin/analytics', undefined, token),
 };
