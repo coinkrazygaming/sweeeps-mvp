@@ -48,8 +48,13 @@ const ProtectedRoute = ({ element }: { element: React.ReactNode }) => {
 const AppContent = () => (
   <Routes>
     {/* Public routes */}
+    <Route path="/home" element={<Home />} />
     <Route path="/login" element={<Login />} />
     <Route path="/signup" element={<Signup />} />
+    <Route path="/faq" element={<FAQ />} />
+    <Route path="/terms" element={<Terms />} />
+    <Route path="/privacy" element={<Privacy />} />
+    <Route path="/promotions" element={<Promotions />} />
 
     {/* Protected routes */}
     <Route path="/" element={<ProtectedRoute element={<Dashboard />} />} />
