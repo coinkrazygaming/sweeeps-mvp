@@ -168,7 +168,7 @@ export default function Profile() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8">
+        <div className="flex gap-2 mb-8 flex-wrap">
           <button
             onClick={() => setTab("transactions")}
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition ${
@@ -189,6 +189,17 @@ export default function Profile() {
             }`}
           >
             Game History
+          </button>
+          <button
+            onClick={() => setTab("kyc")}
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition ${
+              tab === "kyc"
+                ? "gradient-gold text-slate-900"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+            }`}
+          >
+            <Shield className="w-5 h-5" />
+            KYC
           </button>
           <button
             onClick={() => setTab("redeem")}
