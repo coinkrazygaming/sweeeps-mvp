@@ -15,6 +15,8 @@ import {
   getTransactionHistory,
   getGameHistory,
   addDailyBonus,
+  submitKYC,
+  getKYCStatus,
 } from "./routes/users";
 
 // Game routes
