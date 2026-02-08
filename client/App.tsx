@@ -12,38 +12,10 @@ import { AuthProvider, useAuth } from "./lib/auth-context";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import Games from "./pages/Games";
+import Store from "./pages/Store";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-
-// Placeholder pages
-const GamesPage = () => (
-  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-white mb-4">Games</h1>
-      <p className="text-slate-400 mb-6">Game library coming soon. Play featured games from the dashboard!</p>
-      <a href="/" className="text-yellow-400 hover:text-yellow-300 font-semibold">← Back to Dashboard</a>
-    </div>
-  </div>
-);
-
-const StorePage = () => (
-  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-white mb-4">Store</h1>
-      <p className="text-slate-400 mb-6">Coin store coming soon. Check back from the dashboard!</p>
-      <a href="/" className="text-yellow-400 hover:text-yellow-300 font-semibold">← Back to Dashboard</a>
-    </div>
-  </div>
-);
-
-const ProfilePage = () => (
-  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-white mb-4">Profile</h1>
-      <p className="text-slate-400 mb-6">Profile and redemption page coming soon!</p>
-      <a href="/" className="text-yellow-400 hover:text-yellow-300 font-semibold">← Back to Dashboard</a>
-    </div>
-  </div>
-);
 
 // Protected route wrapper
 const ProtectedRoute = ({ element }: { element: React.ReactNode }) => {
