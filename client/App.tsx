@@ -51,6 +51,7 @@ const AppContent = () => (
     <Route path="/games" element={<ProtectedRoute element={<Games />} />} />
     <Route path="/store" element={<ProtectedRoute element={<Store />} />} />
     <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+    <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
 
     {/* Catch all */}
     <Route path="*" element={<NotFound />} />
