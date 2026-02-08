@@ -139,8 +139,8 @@ export const playGame: RequestHandler = async (req, res) => {
       }
 
       // Calculate new balance
-      const newGC = parseFloat(currentBalance.gold_coins);
-      const newSC = parseFloat(currentBalance.sweepstakes_coins);
+      let newGC = parseFloat(currentBalance.gold_coins);
+      let newSC = parseFloat(currentBalance.sweepstakes_coins);
 
       if (currencyType === 'GC') {
         newGC -= betAmount;
