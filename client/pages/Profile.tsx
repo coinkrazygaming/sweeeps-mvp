@@ -28,13 +28,17 @@ export default function Profile() {
 
     const loadData = async () => {
       try {
-        const [txResponse, gamesResponse] = await Promise.all([
+        const [txResponse, gamesResponse, kycResponse] = await Promise.all([
           usersAPI.getTransactionHistory(accessToken),
           usersAPI.getGameHistory(accessToken),
+          fetch("/api/users/kyc/status", {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }).then((r) => r.json()),
         ]);
 
         setTransactions(txResponse.transactions || []);
         setGames(gamesResponse.games || []);
+        setKYCStatus(kycResponse.kycStatus || "UNVERIFIED");
       } catch (error) {
         console.error("Failed to load data:", error);
       } finally {
