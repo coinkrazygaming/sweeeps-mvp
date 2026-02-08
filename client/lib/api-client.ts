@@ -56,15 +56,15 @@ export const authAPI = {
 // Users API
 export const usersAPI = {
   getProfile: (token: string) =>
-    apiCall('GET', '/users/profile', undefined, token),
+    apiCall<any>('GET', '/users/profile', undefined, token),
   getBalance: (token: string) =>
-    apiCall('GET', '/users/balance', undefined, token),
+    apiCall<any>('GET', '/users/balance', undefined, token),
   getTransactionHistory: (token: string, limit = 20, offset = 0) =>
-    apiCall('GET', `/users/transactions?limit=${limit}&offset=${offset}`, undefined, token),
+    apiCall<{ transactions: any[] }>('GET', `/users/transactions?limit=${limit}&offset=${offset}`, undefined, token),
   getGameHistory: (token: string, limit = 20, offset = 0) =>
-    apiCall('GET', `/users/games?limit=${limit}&offset=${offset}`, undefined, token),
+    apiCall<{ games: any[] }>('GET', `/users/games?limit=${limit}&offset=${offset}`, undefined, token),
   addDailyBonus: (token: string) =>
-    apiCall('POST', '/users/daily-bonus', {}, token),
+    apiCall<any>('POST', '/users/daily-bonus', {}, token),
 };
 
 // Games API
