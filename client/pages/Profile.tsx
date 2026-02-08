@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth-context";
 import { usersAPI, redemptionsAPI } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { User, History, Gift, LogOut } from "lucide-react";
+import KYCForm, { KYCData } from "@/components/KYCForm";
+import { User, History, Gift, LogOut, Shield } from "lucide-react";
 
 export default function Profile() {
   const { user, accessToken, logout, refreshBalance } = useAuth();
