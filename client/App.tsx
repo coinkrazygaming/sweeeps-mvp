@@ -17,6 +17,11 @@ import Store from "./pages/Store";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import Home from "./pages/Home";
+import FAQ from "./pages/FAQ";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Promotions from "./pages/Promotions";
 
 // Protected route wrapper
 const ProtectedRoute = ({ element }: { element: React.ReactNode }) => {
