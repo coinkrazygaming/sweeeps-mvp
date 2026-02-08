@@ -74,6 +74,35 @@ export default function Profile() {
     }
   };
 
+  const handleSubmitKYC = async (kycData: KYCData) => {
+    if (!accessToken) return;
+
+    setKYCLoading(true);
+    try {
+      const response = await fetch("/api/users/kyc", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(kycData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit KYC");
+      }
+
+      const result = await response.json();
+      setKYCStatus("PENDING");
+      alert("KYC information submitted successfully! Admin will review soon.");
+    } catch (error) {
+      console.error("KYC submission error:", error);
+      alert("Failed to submit KYC information");
+    } finally {
+      setKYCLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/login");
