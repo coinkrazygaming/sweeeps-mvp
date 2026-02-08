@@ -11,12 +11,14 @@ export default function Profile() {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [games, setGames] = useState<any[]>([]);
-  const [tab, setTab] = useState<"transactions" | "games" | "redeem">(
+  const [tab, setTab] = useState<"transactions" | "games" | "redeem" | "kyc">(
     "transactions",
   );
   const [loading, setLoading] = useState(true);
   const [redemptionAmount, setRedemptionAmount] = useState(100);
   const [redeeming, setRedeeming] = useState(false);
+  const [kycStatus, setKYCStatus] = useState<"UNVERIFIED" | "PENDING" | "VERIFIED">("UNVERIFIED");
+  const [kycLoading, setKYCLoading] = useState(false);
 
   useEffect(() => {
     if (!user || !accessToken) {
