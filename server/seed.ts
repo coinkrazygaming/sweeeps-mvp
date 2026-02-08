@@ -21,20 +21,34 @@ async function seedDatabase() {
     const adminId = uuid();
     const adminPasswordHash = await hashPassword(ADMIN_PASSWORD);
 
-    await client.query(
-      `INSERT INTO users (id, email, password_hash, username, role, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       ON CONFLICT (email) DO UPDATE SET password_hash = $3, role = $5`,
-      [adminId, ADMIN_EMAIL, adminPasswordHash, "admin", "ADMIN", true],
-    );
+    try {
+      // Check if admin exists
+      const existingAdmin = await client.query(
+        "SELECT id FROM users WHERE email = $1",
+        [ADMIN_EMAIL],
+      );
 
-    // Initialize admin balance
-    await client.query(
-      `INSERT INTO user_balances (user_id, gold_coins, sweepstakes_coins)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (user_id) DO UPDATE SET gold_coins = $2, sweepstakes_coins = $3`,
-      [adminId, 999999, 999999],
-    );
+      if (existingAdmin.rows.length > 0) {
+        console.log(`⚠️  Admin user already exists`);
+      } else {
+        await client.query(
+          `INSERT INTO users (id, email, password_hash, username, role, is_active)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [adminId, ADMIN_EMAIL, adminPasswordHash, "admin", "ADMIN", true],
+        );
+
+        // Initialize admin balance
+        await client.query(
+          `INSERT INTO user_balances (user_id, gold_coins, sweepstakes_coins)
+           VALUES ($1, $2, $3)`,
+          [adminId, 999999, 999999],
+        );
+
+        console.log(`✅ Admin user created: ${ADMIN_EMAIL}`);
+      }
+    } catch (error) {
+      console.log(`⚠️  Error with admin user: ${(error as any).message}`);
+    }
 
     console.log(`✅ Admin user created: ${ADMIN_EMAIL}`);
 
