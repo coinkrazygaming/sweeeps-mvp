@@ -7,7 +7,11 @@ const promotions = [
     title: "Daily Login Bonus",
     description: "Claim free sweepstakes coins every day you log in",
     icon: Gift,
-    details: ["100+ Sweepstakes Coins daily", "No purchase required", "Claim anytime"],
+    details: [
+      "100+ Sweepstakes Coins daily",
+      "No purchase required",
+      "Claim anytime",
+    ],
     badge: "Active",
     badgeColor: "bg-green-500/20 text-green-200 border-green-500/50",
   },
@@ -15,7 +19,11 @@ const promotions = [
     title: "Welcome Bonus",
     description: "New players get an instant bonus package",
     icon: Zap,
-    details: ["500 Gold Coins bonus", "1,000 Sweepstakes Coins", "Valid for 30 days"],
+    details: [
+      "500 Gold Coins bonus",
+      "1,000 Sweepstakes Coins",
+      "Valid for 30 days",
+    ],
     badge: "Active",
     badgeColor: "bg-green-500/20 text-green-200 border-green-500/50",
   },
@@ -23,7 +31,11 @@ const promotions = [
     title: "Weekly Multiplier",
     description: "Double your winnings on select games each week",
     icon: TrendingUp,
-    details: ["2x winnings on featured games", "New games weekly", "Ends at midnight Sunday"],
+    details: [
+      "2x winnings on featured games",
+      "New games weekly",
+      "Ends at midnight Sunday",
+    ],
     badge: "Active",
     badgeColor: "bg-green-500/20 text-green-200 border-green-500/50",
   },
@@ -31,7 +43,11 @@ const promotions = [
     title: "Referral Rewards",
     description: "Earn coins when you refer friends",
     icon: Gift,
-    details: ["500 coins per successful referral", "Unlimited earning potential", "Instant credits"],
+    details: [
+      "500 coins per successful referral",
+      "Unlimited earning potential",
+      "Instant credits",
+    ],
     badge: "Coming Soon",
     badgeColor: "bg-blue-500/20 text-blue-200 border-blue-500/50",
   },
@@ -39,7 +55,11 @@ const promotions = [
     title: "VIP Tier Bonuses",
     description: "Exclusive rewards based on your play level",
     icon: Crown,
-    details: ["Higher daily bonuses", "Exclusive games access", "Priority support"],
+    details: [
+      "Higher daily bonuses",
+      "Exclusive games access",
+      "Priority support",
+    ],
     badge: "Coming Soon",
     badgeColor: "bg-blue-500/20 text-blue-200 border-blue-500/50",
   },
@@ -47,7 +67,11 @@ const promotions = [
     title: "Holiday Specials",
     description: "Special promotions during holidays and events",
     icon: Gift,
-    details: ["Seasonal bonus packages", "Limited time offers", "Extra winning chances"],
+    details: [
+      "Seasonal bonus packages",
+      "Limited time offers",
+      "Extra winning chances",
+    ],
     badge: "Coming Soon",
     badgeColor: "bg-blue-500/20 text-blue-200 border-blue-500/50",
   },
@@ -66,7 +90,10 @@ export default function PromotionsPage() {
       <nav className="relative z-20 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition">
+            <Link
+              to="/"
+              className="flex items-center gap-3 hover:opacity-80 transition"
+            >
               <Crown className="w-8 h-8 text-yellow-400" />
               <span className="text-2xl font-bold gradient-gold bg-clip-text text-transparent">
                 CrownPlay
@@ -100,7 +127,10 @@ export default function PromotionsPage() {
           {promotions.map((promo, idx) => {
             const Icon = promo.icon;
             return (
-              <div key={idx} className="group glass rounded-xl border border-white/10 p-8 hover:border-white/20 transition overflow-hidden">
+              <div
+                key={idx}
+                className="group glass rounded-xl border border-white/10 p-8 hover:border-white/20 transition overflow-hidden"
+              >
                 {/* Badge */}
                 <div className="flex justify-between items-start mb-4">
                   <Icon className="w-10 h-10 text-yellow-400" />
@@ -122,7 +152,10 @@ export default function PromotionsPage() {
                 {/* Details */}
                 <ul className="space-y-3 mb-8">
                   {promo.details.map((detail, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-slate-400">
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-sm text-slate-400"
+                    >
                       <span className="text-yellow-400 font-bold mt-1">•</span>
                       <span>{detail}</span>
                     </li>
@@ -151,19 +184,29 @@ export default function PromotionsPage() {
           </h2>
           <div className="space-y-4 text-slate-400">
             <p>
-              <strong className="text-white">Eligibility:</strong> Promotions are available to registered users who meet all eligibility requirements. Some promotions may be restricted by location.
+              <strong className="text-white">Eligibility:</strong> Promotions
+              are available to registered users who meet all eligibility
+              requirements. Some promotions may be restricted by location.
             </p>
             <p>
-              <strong className="text-white">Limitations:</strong> Each promotion can typically be claimed once per account. Multiple account abuse will result in account suspension.
+              <strong className="text-white">Limitations:</strong> Each
+              promotion can typically be claimed once per account. Multiple
+              account abuse will result in account suspension.
             </p>
             <p>
-              <strong className="text-white">Expiration:</strong> Promotional bonuses expire as indicated in the specific promotion details. Unused bonuses forfeit after expiration.
+              <strong className="text-white">Expiration:</strong> Promotional
+              bonuses expire as indicated in the specific promotion details.
+              Unused bonuses forfeit after expiration.
             </p>
             <p>
-              <strong className="text-white">Modifications:</strong> CrownPlay reserves the right to modify, suspend, or cancel promotions at any time without notice.
+              <strong className="text-white">Modifications:</strong> CrownPlay
+              reserves the right to modify, suspend, or cancel promotions at any
+              time without notice.
             </p>
             <p>
-              <strong className="text-white">Withdrawal:</strong> Some promotional bonuses may have wagering requirements before withdrawal. Check promotion details for specifics.
+              <strong className="text-white">Withdrawal:</strong> Some
+              promotional bonuses may have wagering requirements before
+              withdrawal. Check promotion details for specifics.
             </p>
           </div>
         </div>
@@ -188,7 +231,8 @@ export default function PromotionsPage() {
       <footer className="relative z-10 border-t border-slate-800 bg-slate-900/30 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <p className="text-center text-slate-500 text-sm">
-            © 2024 CrownPlay. All rights reserved. | Responsible Gaming | 18+ Only
+            © 2024 CrownPlay. All rights reserved. | Responsible Gaming | 18+
+            Only
           </p>
         </div>
       </footer>

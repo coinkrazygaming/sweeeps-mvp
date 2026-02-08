@@ -39,7 +39,7 @@ The app will be available at `http://localhost:8080`
 
 ## 📦 Prerequisites
 
-- **Node.js**: 18+ 
+- **Node.js**: 18+
 - **pnpm**: 10.14.0+ (or npm/yarn)
 - **PostgreSQL**: 13+
 - **Git**: For version control
@@ -61,6 +61,7 @@ DATABASE_URL=postgresql://[user]:[password]@localhost:5432/crownplay_mvp
 ```
 
 **Example for local development:**
+
 ```
 DATABASE_URL=postgresql://postgres:password@localhost:5432/crownplay_mvp
 ```
@@ -76,6 +77,7 @@ $bytes = New-Object Byte[] 32; [Security.Cryptography.RNGCryptoServiceProvider]:
 ```
 
 Add the generated secret to `.env`:
+
 ```
 JWT_SECRET=your-generated-32-character-hex-string
 ```
@@ -123,6 +125,7 @@ pnpm dev
 ```
 
 This starts:
+
 - **Frontend**: Vite dev server with hot reload
 - **Backend**: Express server with TypeScript compilation
 - **Database**: PostgreSQL connection initialized
@@ -136,6 +139,7 @@ pnpm build
 ```
 
 Generates:
+
 - Client bundle in `dist/spa/`
 - Server bundle in `dist/server/`
 
@@ -149,6 +153,7 @@ pnpm start
 ## 🌱 Seeding Data
 
 The seed script creates:
+
 - **Admin user** (`coinkrazy26@gmail.com` / `admin123`)
 - **5 demo players** with various balances
 - **5 coin packages** (Starter, Silver, Gold, Platinum, Diamond)
@@ -161,6 +166,7 @@ pnpm seed
 ```
 
 **Output:**
+
 ```
 🌱 Starting database seed...
 📊 Initializing database schema...
@@ -495,6 +501,7 @@ Error: connect ECONNREFUSED 127.0.0.1:5432
 ```
 
 **Solution**: Check PostgreSQL is running
+
 ```bash
 # macOS
 brew services start postgresql
@@ -521,6 +528,7 @@ Error: relation "users" does not exist
 ```
 
 **Solution**: Database schema not initialized
+
 ```bash
 # The schema auto-initializes on first app run
 pnpm dev

@@ -44,8 +44,18 @@ async function seedDatabase() {
       { email: "john@example.com", username: "john_player", gc: 100, sc: 500 },
       { email: "jane@example.com", username: "jane_winner", gc: 250, sc: 1500 },
       { email: "bob@example.com", username: "bob_slots", gc: 50, sc: 200 },
-      { email: "alice@example.com", username: "alice_lucky", gc: 500, sc: 3000 },
-      { email: "charlie@example.com", username: "charlie_frequent", gc: 75, sc: 750 },
+      {
+        email: "alice@example.com",
+        username: "alice_lucky",
+        gc: 500,
+        sc: 3000,
+      },
+      {
+        email: "charlie@example.com",
+        username: "charlie_frequent",
+        gc: 75,
+        sc: 750,
+      },
     ];
 
     for (const demoUser of demoUsers) {

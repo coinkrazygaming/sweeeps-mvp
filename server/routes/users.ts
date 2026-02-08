@@ -230,15 +230,8 @@ export const submitKYC: RequestHandler = async (req, res) => {
       return;
     }
 
-    const {
-      fullName,
-      dateOfBirth,
-      address,
-      city,
-      state,
-      zipCode,
-      country,
-    } = req.body;
+    const { fullName, dateOfBirth, address, city, state, zipCode, country } =
+      req.body;
 
     if (!fullName || !dateOfBirth || !address) {
       res.status(400).json({ error: "Missing required KYC fields" });

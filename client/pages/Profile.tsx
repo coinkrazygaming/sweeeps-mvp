@@ -17,7 +17,9 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [redemptionAmount, setRedemptionAmount] = useState(100);
   const [redeeming, setRedeeming] = useState(false);
-  const [kycStatus, setKYCStatus] = useState<"UNVERIFIED" | "PENDING" | "VERIFIED">("UNVERIFIED");
+  const [kycStatus, setKYCStatus] = useState<
+    "UNVERIFIED" | "PENDING" | "VERIFIED"
+  >("UNVERIFIED");
   const [kycLoading, setKYCLoading] = useState(false);
 
   useEffect(() => {

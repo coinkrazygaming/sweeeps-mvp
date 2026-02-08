@@ -146,7 +146,10 @@ export default function FAQ() {
       <nav className="relative z-20 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition">
+            <Link
+              to="/"
+              className="flex items-center gap-3 hover:opacity-80 transition"
+            >
               <Crown className="w-8 h-8 text-yellow-400" />
               <span className="text-2xl font-bold gradient-gold bg-clip-text text-transparent">
                 CrownPlay
@@ -204,7 +207,8 @@ export default function FAQ() {
       <footer className="relative z-10 border-t border-slate-800 bg-slate-900/30 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <p className="text-center text-slate-500 text-sm">
-            © 2024 CrownPlay. All rights reserved. | Responsible Gaming | 18+ Only
+            © 2024 CrownPlay. All rights reserved. | Responsible Gaming | 18+
+            Only
           </p>
         </div>
       </footer>

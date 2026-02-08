@@ -33,7 +33,9 @@ export async function initializeDatabase() {
 
     // Add role column if it doesn't exist (migration)
     try {
-      await client.query(`ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'PLAYER'`);
+      await client.query(
+        `ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'PLAYER'`,
+      );
     } catch (error) {
       // Column might already exist, ignore
     }

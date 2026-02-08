@@ -36,7 +36,7 @@ export default function KYCForm({
   const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -110,7 +110,8 @@ export default function KYCForm({
             </span>
           </div>
           <p className="text-sm text-slate-400">
-            Your KYC information is under review. This typically takes 1-2 business days.
+            Your KYC information is under review. This typically takes 1-2
+            business days.
           </p>
         </div>
       )}
@@ -230,7 +231,9 @@ export default function KYCForm({
         <div className="pt-4">
           <Button
             type="submit"
-            disabled={loading || kycStatus === "PENDING" || kycStatus === "VERIFIED"}
+            disabled={
+              loading || kycStatus === "PENDING" || kycStatus === "VERIFIED"
+            }
             className="w-full gradient-gold text-slate-900 font-semibold py-2 rounded-lg hover:opacity-90 transition disabled:opacity-50"
           >
             {loading ? "Submitting..." : "Submit KYC Information"}
@@ -239,7 +242,8 @@ export default function KYCForm({
       </form>
 
       <p className="text-xs text-slate-500 mt-4">
-        Your information is securely stored and encrypted. We comply with KYC/AML regulations.
+        Your information is securely stored and encrypted. We comply with
+        KYC/AML regulations.
       </p>
     </div>
   );
