@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import Games from "./pages/Games";
 import Store from "./pages/Store";
 import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 // Protected route wrapper
