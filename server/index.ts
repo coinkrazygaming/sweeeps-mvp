@@ -89,6 +89,8 @@ export function createServer() {
   app.get("/api/users/transactions", authMiddleware, getTransactionHistory);
   app.get("/api/users/games", authMiddleware, getGameHistory);
   app.post("/api/users/daily-bonus", authMiddleware, addDailyBonus);
+  app.post("/api/users/kyc", authMiddleware, submitKYC);
+  app.get("/api/users/kyc/status", authMiddleware, getKYCStatus);
 
   // Game routes
   app.get("/api/games", listGames);
