@@ -196,22 +196,32 @@ async function seedDatabase() {
 
     for (const promo of promoCodes) {
       try {
-        await client.query(
-          `INSERT INTO promo_codes (code, description, bonus_type, bonus_amount, max_uses, expiry_date, is_active)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-          [
-            promo.code,
-            promo.description,
-            promo.bonusType,
-            promo.bonusAmount,
-            promo.maxUses,
-            promo.expiry,
-            true,
-          ],
+        // Check if promo exists
+        const existing = await client.query(
+          "SELECT id FROM promo_codes WHERE code = $1",
+          [promo.code],
         );
-        console.log(`  ✓ Created promo: ${promo.code}`);
+
+        if (existing.rows.length === 0) {
+          await client.query(
+            `INSERT INTO promo_codes (code, description, bonus_type, bonus_amount, max_uses, expiry_date, is_active)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [
+              promo.code,
+              promo.description,
+              promo.bonusType,
+              promo.bonusAmount,
+              promo.maxUses,
+              promo.expiry,
+              true,
+            ],
+          );
+          console.log(`  ✓ Created promo: ${promo.code}`);
+        } else {
+          console.log(`  ⚠️  Promo ${promo.code} already exists`);
+        }
       } catch (error) {
-        console.log(`  ⚠️  Promo ${promo.code} already exists`);
+        console.log(`  ⚠️  Error with promo ${promo.code}: ${(error as any).message}`);
       }
     }
 
