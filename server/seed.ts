@@ -136,22 +136,32 @@ async function seedDatabase() {
     for (const pkg of packages) {
       const packageId = uuid();
       try {
-        await client.query(
-          `INSERT INTO gc_packages (id, name, gold_coins, bonus_sweepstakes_coins, price_cents, display_order, is_active)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-          [
-            packageId,
-            pkg.name,
-            pkg.goldCoins,
-            pkg.bonusSwc,
-            pkg.priceCents,
-            pkg.order,
-            true,
-          ],
+        // Check if package exists
+        const existing = await client.query(
+          "SELECT id FROM gc_packages WHERE name = $1",
+          [pkg.name],
         );
-        console.log(`  ✓ Created package: ${pkg.name}`);
+
+        if (existing.rows.length === 0) {
+          await client.query(
+            `INSERT INTO gc_packages (id, name, gold_coins, bonus_sweepstakes_coins, price_cents, display_order, is_active)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [
+              packageId,
+              pkg.name,
+              pkg.goldCoins,
+              pkg.bonusSwc,
+              pkg.priceCents,
+              pkg.order,
+              true,
+            ],
+          );
+          console.log(`  ✓ Created package: ${pkg.name}`);
+        } else {
+          console.log(`  ⚠️  Package ${pkg.name} already exists`);
+        }
       } catch (error) {
-        console.log(`  ⚠️  Package ${pkg.name} already exists`);
+        console.log(`  ⚠️  Error with package ${pkg.name}: ${(error as any).message}`);
       }
     }
 
