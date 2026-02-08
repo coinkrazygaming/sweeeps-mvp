@@ -70,23 +70,23 @@ export const usersAPI = {
 // Games API
 export const gamesAPI = {
   listGames: () =>
-    apiCall('GET', '/games', undefined),
+    apiCall<{ games: any[] }>('GET', '/games', undefined),
   getGameDetails: (gameId: string) =>
-    apiCall('GET', `/games/${gameId}`, undefined),
+    apiCall<any>('GET', `/games/${gameId}`, undefined),
   playGame: (token: string, gameId: string, betAmount: number, currencyType: 'GC' | 'SC', gameData?: any) =>
-    apiCall('POST', '/games/play', { gameId, betAmount, currencyType, gameData }, token),
+    apiCall<any>('POST', '/games/play', { gameId, betAmount, currencyType, gameData }, token),
 };
 
 // Store API
 export const storeAPI = {
   listPackages: () =>
-    apiCall('GET', '/store/packages', undefined),
+    apiCall<{ packages: any[] }>('GET', '/store/packages', undefined),
   createCheckoutSession: (token: string, packageId: string, promoCode?: string) =>
-    apiCall('POST', '/store/checkout', { packageId, promoCode }, token),
+    apiCall<any>('POST', '/store/checkout', { packageId, promoCode }, token),
   completePurchase: (token: string, packageId: string, stripeTransactionId: string, promoCode?: string) =>
-    apiCall('POST', '/store/purchase', { packageId, stripeTransactionId, promoCode }, token),
+    apiCall<any>('POST', '/store/purchase', { packageId, stripeTransactionId, promoCode }, token),
   validatePromoCode: (code: string) =>
-    apiCall('POST', '/store/validate-promo', { code }),
+    apiCall<any>('POST', '/store/validate-promo', { code }),
 };
 
 // Redemptions API
