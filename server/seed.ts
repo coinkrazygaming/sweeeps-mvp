@@ -161,7 +161,9 @@ async function seedDatabase() {
           console.log(`  ⚠️  Package ${pkg.name} already exists`);
         }
       } catch (error) {
-        console.log(`  ⚠️  Error with package ${pkg.name}: ${(error as any).message}`);
+        console.log(
+          `  ⚠️  Error with package ${pkg.name}: ${(error as any).message}`,
+        );
       }
     }
 
@@ -221,7 +223,9 @@ async function seedDatabase() {
           console.log(`  ⚠️  Promo ${promo.code} already exists`);
         }
       } catch (error) {
-        console.log(`  ⚠️  Error with promo ${promo.code}: ${(error as any).message}`);
+        console.log(
+          `  ⚠️  Error with promo ${promo.code}: ${(error as any).message}`,
+        );
       }
     }
 
