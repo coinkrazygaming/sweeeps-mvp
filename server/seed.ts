@@ -50,8 +50,6 @@ async function seedDatabase() {
       console.log(`⚠️  Error with admin user: ${(error as any).message}`);
     }
 
-    console.log(`✅ Admin user created: ${ADMIN_EMAIL}`);
-
     // Create demo users
     console.log("👥 Creating demo users...");
     const demoUsers = [
