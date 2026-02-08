@@ -22,10 +22,10 @@ async function seedDatabase() {
     const adminPasswordHash = await hashPassword(ADMIN_PASSWORD);
 
     await client.query(
-      `INSERT INTO users (id, email, password_hash, username, is_active)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (email) DO UPDATE SET password_hash = $3`,
-      [adminId, ADMIN_EMAIL, adminPasswordHash, "admin", true],
+      `INSERT INTO users (id, email, password_hash, username, role, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       ON CONFLICT (email) DO UPDATE SET password_hash = $3, role = $5`,
+      [adminId, ADMIN_EMAIL, adminPasswordHash, "admin", "ADMIN", true],
     );
 
     // Initialize admin balance
