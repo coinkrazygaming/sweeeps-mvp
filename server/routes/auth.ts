@@ -143,6 +143,7 @@ export const login: RequestHandler = async (req, res) => {
           id: userData.id,
           email: userData.email,
           username: userData.username,
+          role: userData.role || "PLAYER",
           goldCoins: balances.rows[0]?.gold_coins || 0,
           sweepstakesCoins: balances.rows[0]?.sweepstakes_coins || 0,
         },
