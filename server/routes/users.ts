@@ -221,3 +221,104 @@ export const addDailyBonus: RequestHandler = async (req, res) => {
     res.status(500).json({ error: "Failed to claim daily bonus" });
   }
 };
+
+export const submitKYC: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const {
+      fullName,
+      dateOfBirth,
+      address,
+      city,
+      state,
+      zipCode,
+      country,
+    } = req.body;
+
+    if (!fullName || !dateOfBirth || !address) {
+      res.status(400).json({ error: "Missing required KYC fields" });
+      return;
+    }
+
+    const client = await pool.connect();
+    try {
+      // Update user with KYC data
+      const kycData = JSON.stringify({
+        fullName,
+        dateOfBirth,
+        address,
+        city,
+        state,
+        zipCode,
+        country,
+      });
+
+      await client.query(
+        `UPDATE users SET kyc_flags = array_append(kyc_flags, $1) WHERE id = $2`,
+        ["KYC_SUBMITTED", userId],
+      );
+
+      // Store KYC in audit log for now (in production, use a separate table)
+      await client.query(
+        `INSERT INTO audit_log (admin_id, action, target_user_id, details)
+         VALUES ($1, $2, $3, $4)`,
+        [userId, "KYC_SUBMISSION", userId, { kycData }],
+      );
+
+      res.json({
+        success: true,
+        message: "KYC information submitted successfully",
+        status: "PENDING",
+      });
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error("KYC submission error:", error);
+    res.status(500).json({ error: "Failed to submit KYC" });
+  }
+};
+
+export const getKYCStatus: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const client = await pool.connect();
+    try {
+      const user = await client.query(
+        "SELECT kyc_flags FROM users WHERE id = $1",
+        [userId],
+      );
+
+      if (user.rows.length === 0) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      const kycFlags = user.rows[0].kyc_flags || [];
+      let status = "UNVERIFIED";
+
+      if (kycFlags.includes("KYC_VERIFIED")) {
+        status = "VERIFIED";
+      } else if (kycFlags.includes("KYC_SUBMITTED")) {
+        status = "PENDING";
+      }
+
+      res.json({ kycStatus: status, flags: kycFlags });
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error("Get KYC status error:", error);
+    res.status(500).json({ error: "Failed to get KYC status" });
+  }
+};
