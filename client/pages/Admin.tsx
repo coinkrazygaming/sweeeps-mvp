@@ -14,8 +14,8 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [approving, setApproving] = useState<string | null>(null);
 
-  // Simple admin check - in production, use proper role-based access
-  const isAdmin = user?.email?.endsWith("@admin");
+  // Check if user has admin role
+  const isAdmin = user?.role === "ADMIN";
 
   useEffect(() => {
     if (!isAdmin) {
