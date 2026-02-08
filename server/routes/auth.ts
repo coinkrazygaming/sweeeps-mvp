@@ -72,6 +72,7 @@ export const signup: RequestHandler = async (req, res) => {
           id: userId,
           email,
           username,
+          role: "PLAYER",
           goldCoins: 10,
           sweepstakesCoins: 50,
         },
