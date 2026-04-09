@@ -104,7 +104,7 @@ export default function Dashboard() {
               <Coins className="w-5 h-5 text-yellow-400" />
             </div>
             <p className="text-4xl font-bold text-yellow-400 mb-2">
-              {user.goldCoins.toFixed(2)}
+              {(typeof user.goldCoins === 'number' ? user.goldCoins : 0).toFixed(2)}
             </p>
             <p className="text-sm text-slate-500">For entertainment play</p>
             <Button className="w-full mt-4 gradient-gold text-slate-900 font-semibold hover:opacity-90">
@@ -119,7 +119,7 @@ export default function Dashboard() {
               <Sparkles className="w-5 h-5 text-purple-400" />
             </div>
             <p className="text-4xl font-bold text-purple-400 mb-2">
-              {user.sweepstakesCoins.toFixed(2)}
+              {(typeof user.sweepstakesCoins === 'number' ? user.sweepstakesCoins : 0).toFixed(2)}
             </p>
             <p className="text-sm text-slate-500">Redeemable for prizes</p>
             <Button className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold">
