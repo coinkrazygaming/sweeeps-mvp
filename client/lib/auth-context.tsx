@@ -42,7 +42,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (savedAccessToken && savedUser) {
       setAccessToken(savedAccessToken);
       setRefreshToken(savedRefreshToken);
-      setUser(JSON.parse(savedUser));
+      const parsedUser = JSON.parse(savedUser);
+      // Ensure numeric fields are properly typed
+      if (parsedUser) {
+        parsedUser.goldCoins = typeof parsedUser.goldCoins === 'number' ? parsedUser.goldCoins : 0;
+        parsedUser.sweepstakesCoins = typeof parsedUser.sweepstakesCoins === 'number' ? parsedUser.sweepstakesCoins : 0;
+      }
+      setUser(parsedUser);
     }
 
     setIsLoading(false);
@@ -53,13 +59,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setError(null);
       const response: any = await authAPI.signup(email, password, username);
 
+      const user = {
+        ...response.user,
+        goldCoins: typeof response.user.goldCoins === 'number' ? response.user.goldCoins : 0,
+        sweepstakesCoins: typeof response.user.sweepstakesCoins === 'number' ? response.user.sweepstakesCoins : 0,
+      };
+
       setAccessToken(response.accessToken);
       setRefreshToken(response.refreshToken);
-      setUser(response.user);
+      setUser(user);
 
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
-      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("user", JSON.stringify(user));
     } catch (err) {
       const message = err instanceof ApiError ? err.message : "Signup failed";
       setError(message);
@@ -72,13 +84,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setError(null);
       const response: any = await authAPI.login(email, password);
 
+      const user = {
+        ...response.user,
+        goldCoins: typeof response.user.goldCoins === 'number' ? response.user.goldCoins : 0,
+        sweepstakesCoins: typeof response.user.sweepstakesCoins === 'number' ? response.user.sweepstakesCoins : 0,
+      };
+
       setAccessToken(response.accessToken);
       setRefreshToken(response.refreshToken);
-      setUser(response.user);
+      setUser(user);
 
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
-      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("user", JSON.stringify(user));
     } catch (err) {
       const message = err instanceof ApiError ? err.message : "Login failed";
       setError(message);
@@ -101,12 +119,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const response: any = await usersAPI.getBalance(accessToken);
+      const goldCoins = typeof response.goldCoins === 'number' ? response.goldCoins : 0;
+      const sweepstakesCoins = typeof response.sweepstakesCoins === 'number' ? response.sweepstakesCoins : 0;
+
       setUser((prev) =>
         prev
           ? {
               ...prev,
-              goldCoins: response.goldCoins,
-              sweepstakesCoins: response.sweepstakesCoins,
+              goldCoins,
+              sweepstakesCoins,
             }
           : null,
       );
@@ -116,8 +137,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           "user",
           JSON.stringify({
             ...user,
-            goldCoins: response.goldCoins,
-            sweepstakesCoins: response.sweepstakesCoins,
+            goldCoins,
+            sweepstakesCoins,
           }),
         );
       }
