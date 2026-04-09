@@ -73,8 +73,8 @@ export const signup: RequestHandler = async (req, res) => {
           email,
           username,
           role: "PLAYER",
-          goldCoins: 10,
-          sweepstakesCoins: 50,
+          goldCoins: parseFloat("10"),
+          sweepstakesCoins: parseFloat("50"),
         },
       });
     } finally {
@@ -124,10 +124,23 @@ export const login: RequestHandler = async (req, res) => {
       }
 
       // Get current balances
-      const balances = await client.query(
+      let balances = await client.query(
         "SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 1",
         [userData.id],
       );
+
+      // If no balance record exists, create one
+      if (balances.rows.length === 0) {
+        await client.query(
+          `INSERT INTO user_balances (user_id, gold_coins, sweepstakes_coins)
+           VALUES ($1, $2, $3)`,
+          [userData.id, userData.role === "ADMIN" ? 999999 : 10, userData.role === "ADMIN" ? 999999 : 50],
+        );
+        balances = await client.query(
+          "SELECT gold_coins, sweepstakes_coins FROM user_balances WHERE user_id = $1",
+          [userData.id],
+        );
+      }
 
       const payload: TokenPayload = {
         userId: userData.id,
@@ -135,6 +148,9 @@ export const login: RequestHandler = async (req, res) => {
       };
       const accessToken = generateAccessToken(payload);
       const refreshToken = generateRefreshToken(payload);
+
+      const goldCoins = parseFloat(balances.rows[0].gold_coins);
+      const sweepstakesCoins = parseFloat(balances.rows[0].sweepstakes_coins);
 
       res.json({
         accessToken,
@@ -144,8 +160,8 @@ export const login: RequestHandler = async (req, res) => {
           email: userData.email,
           username: userData.username,
           role: userData.role || "PLAYER",
-          goldCoins: balances.rows[0]?.gold_coins || 0,
-          sweepstakesCoins: balances.rows[0]?.sweepstakes_coins || 0,
+          goldCoins,
+          sweepstakesCoins,
         },
       });
     } finally {
